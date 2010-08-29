@@ -4,6 +4,9 @@ __all__ = ['entity', 'gameloop', 'mixin', 'point', 'quadtree', 'spritesheet',
            'world']
 
 # convenience imports
+import entity, gameloop, mixin, point, text, tiledimage, tilemap, \
+	tween, tweenfunc, util, world
+
 from gameloop import Game
 Constants = Game.Constants
 """A number of useful constants, such as keycodes, event types, and display flags."""

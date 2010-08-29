@@ -1,0 +1,157 @@
+Pyrge - The Python Retro Game Engine
+
+Version 0.1
+
+(C) 2010 Michael Potter 
+(Licensed under the LGPL, see LICENSE file for full details)
+
+Introduction
+============
+
+Pyrge is a 2D game engine, inspired by projects like Flixel and FlashPunk,
+but written in Python and based on Pygame (http://www.pygame.org). It has
+most of the features needed to write complete 2D ("retro-style") games,
+in a package that is (hopefully) as easy to use as the rest of Python.
+
+Requirements
+============
+
+Pyrge requires Pygame to run, and it needs to be a fairly new version
+(at least 1.9). Any of Pygame's requirements are also necessary, but there
+are no additional dependencies. Pyrge will run on version 2.5 or higher
+of Python, but it is not currently compatible with Python 3.x.
+
+
+Why Pyrge?
+==========
+
+The main justification I had for writing Pyrge is that although Pygame is
+a wonderful library, it is, I feel, too low-level. Thus, I decided to wrap
+Pygame into a higher-level structure, an engine matching those available
+for other languages and their associated platforms.
+
+The goal of Pyrge is simply to be easy to learn and use while still retaining 
+the power of Pygame and SDL. Simplicity is the number one priority, because
+I wanted to make the task of learning to write games in Python easier for
+others than it was for me.
+
+Features
+========
+
+
+Installation
+============
+
+Pyrge can be installed by using the setup.py script that should be included
+in the main directory. This is a regular Python distutils script, so you can
+use the command:
+
+	python setup.py install
+
+...to install Pyrge on your system, as you would any other Python package. 
+(You may need to have administrator privileges to perform the installation.)
+
+
+Getting Started
+===============
+
+After installation, 'import pyrge' in the Python interpreter should work
+without giving any errors. If that is true, then the simplest possible
+Pyrge game can be written with the following three lines:
+
+import pyrge
+game = pyrge.gameloop.GameLoop()
+game.loop()
+
+It won't do very much, just put up a blank screen, but it's a start.
+Line 1 imports the Pyrge engine (note that we didn't have to import pygame),
+and the next two lines define a GameLoop object and call its loop() method.
+
+The GameLoop object takes care of all of the work initializing Pygame for you,
+while loop() is a basic game loop that displays the screen, performs game
+logic, and handles program exit.
+
+Now let's add something to the game: the classic "Hello World" text. After
+line 2 in the above, add the following two lines:
+
+hello = pyrge.text.Text("Hello!")
+game.add(hello)
+
+This creates a new Text object containing the line "Hello!" and then adds
+it to the game. Run the new script and you should still see a black screen,
+but now your text should appear in the top-left corner.
+
+That's the general idea behind Pyrge. You create objects, do whatever you
+need to do with them, and then add them to the game.
+
+Classes and Objects
+===================
+
+Pyrge has a wide variety of objects, but the basic ones are these:
+
+* GameLoop (pyrge.gameloop.GameLoop)
+
+	This is one of the two main game classes. You will either use this
+	or a subclass (World or your own custom class) in every Pyrge game.
+	It sets up Pygame, the screen, input, and so on, and it also has a
+	list of event handlers for each of the different types of Pygame
+	events.
+
+* World (pyrge.world.World)
+
+	World is the other "stock" game class. A World differs from a GameLoop
+	in two key respects: World has a "camera" system, where an object
+	(usually the player) is considered the "focus" of the game, which the
+	enging will try to keep centered as much as possible, and a World,
+	unlike a GameLoop, can be larger than the screen.
+
+* Image (pyrge.entity.Image)
+
+	An Image is a sprite, as you would see in any 2D game. Images can be
+	moved around, rotated, and resized. They can be edited as bitmaps using
+	Pygame's drawing functions. They can also be animated. In other words,
+	they're pretty much everything you need.
+
+* Entity (pyrge.entity.Entity)
+
+	Entity is a subclass of Image that adds a few "physical" properties,
+	such as velocity and acceleration. These aren't fully realistic, but
+	they are close enough for most games.
+
+* TiledImage (pyrge.tiledimage.TiledImage)
+
+	Another subclass of Image, TiledImage can be used to make a big image
+	by tiling a smaller image, like you see in old-school backgrounds.
+
+* Tween (pyrge.tween.Tween)
+
+	A Tween is an interpolation. It's just an object that, given a starting
+	point and an ending point, will give out values between those two
+	points, based on how much time has passed. You can use these for smooth
+	motion, for example. They are a staple of other game engines, but 
+	seemingly rare in Python.
+
+* Tweener (pyrge.entity.Tweener)
+
+	A Tweener is an Entity that can do one other thing. Tweeners can hold
+	and control Tween objects, starting, stopping, and restarting them as
+	needed.
+
+* Game (pyrge.Game)
+
+	The Game object (technically an instance of the Globals class in
+	pyrge.gameloop) holds all the "extra" knowledge a game needs, as well
+	as being the gatekeeper to the full functionality of Pygame. Also,
+	it is a way for a game object (e.g., an Image) to communicate with
+	the game world itself.
+
+
+Todo List
+=========
+
+* More documentation
+* Tutorials and examples
+* A better way to wrap Pygame
+* A way to use OpenGL in a game
+* Find more TODO items (and then fix them, of course :p)
+

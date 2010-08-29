@@ -26,6 +26,8 @@ class Text(entity.Image):
            is black (C{Color(0,0,0)}), in which case it will use per-pixel
            alpha values.
 
+       @param text: The text that this object will render.
+
        @keyword text: The text that this object will render.
        @keyword font: A pygame Font object that contains all of the rendering
            information, such as font face, size, and bold/italics. If this is
@@ -40,11 +42,11 @@ class Text(entity.Image):
            the Text object will be resized so that the text will fit on a
            single line.
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, text='', *args, **kwargs):
         # do these first, so we can use them for positioning
 
         # the actual text to render
-        self._text = kwargs.get('text', '')
+        self._text = kwargs.get('text', text)
 
         # the font to use for rendering
         self._font = kwargs.get('font', Game.defaultFont)
@@ -63,11 +65,15 @@ class Text(entity.Image):
         # position and size
 ##        x = kwargs.get('x', 0.0)
 ##        y = kwargs.get('y', 0.0)
-        w = kwargs.get('w', kwargs.get('width', self._font.size(self._text)[0]))
-        h = kwargs.get('h', kwargs.get('height', self._font.get_linesize()))
+        kwargs['w'] = kwargs.get('w', kwargs.get('width', self._font.size(self._text)[0]))
+        kwargs['h'] = kwargs.get('h', kwargs.get('height', self._font.get_linesize()))
 
 ##        super(Text, self).__init__(x,y,w,h)
         super(Text, self).__init__(*args, **kwargs)
+
+        # change position semantics from center to top-left
+        self.x += self.width/2
+        self.y += self.height/2
 
         if len(self._text):
             self._render_text()
@@ -183,7 +189,7 @@ if __name__ == '__main__':
     g = GameLoop()
     font = Game.Font.SysFont('dejavusans', 24)
 
-    t1 = Text(320, 240, text = "Testing Testing 123 qwerty uiop asdf ghjkl zxcv bnm", \
+    t1 = Text("Testing Testing 123 qwerty uiop asdf ghjkl zxcv bnm", 320, 240,\
               antialias=True, font=font, autowidth=True,\
               color = (0,0,0))
 

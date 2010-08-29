@@ -1,3 +1,4 @@
 include *.py
+include README LICENSE
 recursive-include examples *.py *.png
 exclude examples/gametest.py

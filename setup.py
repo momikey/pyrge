@@ -1,4 +1,7 @@
 from distutils.core import setup
+import sys
+
+DATA_FILES = ['README', 'LICENSE']
 
 ASTEROID_PNGS = ['large.png', 'medium.png', 'small.png', 'ship.png']
 INVASION_PNGS = ['ship.png', 'alien.png']
@@ -11,7 +14,8 @@ setup(
 	url="http://github.com/momikey/",
 	packages = ['pyrge', 'pyrge.examples.asteroid', 'pyrge.examples.invasion'],
 	package_dir = {'pyrge': ''},
-	data_files = [('examples/asteroid', ['examples/asteroid/'+a for a in ASTEROID_PNGS]),
-		('examples/invasion', ['examples/invasion/'+i for i in INVASION_PNGS])],
+	package_data = {'pyrge': DATA_FILES, 
+		'pyrge.examples.asteroid': ['*.png'],
+		'pyrge.examples.invasion': ['*.png']},
 	requires=['pygame (>= 1.9)'])
 
