@@ -50,8 +50,8 @@ class SpriteSheet(object):
         self.spriteheight = kwargs['spriteheight']
         self.rows = (self.height + self.yborder)/(self.spriteheight + self.yborder)
 
-        # Use a colorkey if we get one
-        self.colorkey = kwargs.get('colorkey')
+        # Use a colorkey if we get one, or use the default (magenta)
+        self.colorkey = kwargs.get('colorkey', (255,255,0))
         self.sheet.set_colorkey(self.colorkey)
 
         # The border on the left and top sides

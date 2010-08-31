@@ -75,6 +75,7 @@ class TileMap(Image):
                 if col != -1:
                     # -1 is a blank tile, we just leave it empty
                     tile.loadSurface(self.sheet.spriteAt(col))
+                    tile.pixels.set_colorkey(self.sheet.colorkey)
                     self.tiles[(colid,rowid)] = tile
 
     def update(self):
