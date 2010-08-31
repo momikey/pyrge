@@ -543,9 +543,9 @@ class Image(Game.Sprite.DirtySprite):
 
             # figure out which sides of the sprite are colliding
             _lrect = Game.Rect(self.rect.left, self.rect.top, 1, self.rect.height-1)
-            _rrect = Game.Rect(self.rect.right-1, self.rect.top, 1, self.rect.height-1)
+            _rrect = Game.Rect(self.rect.right-2, self.rect.top, 1, self.rect.height-1)
             _trect = Game.Rect(self.rect.left, self.rect.top, self.rect.width-1, 1)
-            _brect = Game.Rect(self.rect.left, self.rect.bottom-1, self.rect.width-1, 1)
+            _brect = Game.Rect(self.rect.left, self.rect.bottom-2, self.rect.width-1, 1)
 
             _l = _lrect.colliderect(other)
             _r = _rrect.colliderect(other)

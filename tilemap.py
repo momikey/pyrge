@@ -45,9 +45,6 @@ class TileMap(Image):
 
         super(TileMap, self).__init__(*args, **kwargs)
 
-        # position (note that the constructor's x/y are the top-left, not the center
-        self.x, self.y = self.x+sheet.spritewidth/2,self.y+sheet.spriteheight/2
-
         # the spritesheet that we'll use
         self.sheet = sheet
 
@@ -65,12 +62,16 @@ class TileMap(Image):
         # a dictionary of all the tiles in the map
         # the keys are tuples (x,y), values are the tiles themselves
         self.tiles = {}
+
+        borderx, bordery = self.sheet.spritewidth/2, self.sheet.spriteheight/2
+        
         for rowid,row in enumerate(self.themap):
             for colid,col in enumerate(row):
-                tile = Image(x=colid*self.sheet.spritewidth, y=rowid*self.sheet.spriteheight, \
-                                w=self.sheet.spritewidth, h=self.sheet.spriteheight)
+                tile = Image(x=colid*self.sheet.spritewidth+self.x+borderx, \
+                             y=rowid*self.sheet.spriteheight+self.y+bordery, \
+                             w=self.sheet.spritewidth, \
+                             h=self.sheet.spriteheight)
                 tile.fixed = True
-                print tile.position
                 if col != -1:
                     # -1 is a blank tile, we just leave it empty
                     tile.loadSurface(self.sheet.spriteAt(col))
@@ -89,20 +90,37 @@ class TileMap(Image):
             for tile in self.tiles.values():
                 self.addChild(tile)
 
-    def overlap(self, other):
+    def overlap(self, other, checkAlive=False):
         """Tests whether an object intersects any tile in the map.
 
-           @return: Whether any tile overlaps the given object.
+           @param other: The object that will be tested for collision.
+           @return: A list of tiles that overlap the given object.
         """
-        # TODO: What should this return? Just a simple collision test?
-        # Or should it return the tile that the sprite intersects?
-        return (True in [other.overlap(t) for t in self.tiles.values()])
+        return [t for t in self.tiles.values() if other.overlap(t)]
+
+    def collide(self, other, kill=False, checkAlive=True):
+        """Performs collision detection and calls collision response methods.
+
+           Specifically, this method tests for overlapping of solid tiles, and
+           calls the "other" object's collision function against each tile. 
+
+           @param other: The object that will be tested for collision.
+           @return: A list of overlapping tiles.
+        """
+        overlapping = self.overlap(other)
+
+        for tile in overlapping:
+            if tile.collidable:
+                other.collide(tile)
+
+        return overlapping
 
     def at(self, xpos, ypos=None):
         """Gets the tile at a given coordinate.
 
            @return: A L{Struct} with two attributes:
-                - tile : A copy of the tile at a specific location on the map.
+                - tile : A copy of the tile at a specific location on the map,
+                    or None if the given position is outside the boundaries of the map.
                 - index : The tile's index on the tilemap's spritesheet, or -1
                     for a blank tile.
         """
@@ -121,7 +139,8 @@ class TileMap(Image):
         """Gets the tile at a specific world-based coordinate.
 
            @return: A L{Struct} with two attributes:
-                - tile : A copy of the tile at a specific location on the map.
+                - tile : A copy of the tile at a specific location on the map,
+                    or None if the given position is outside the map.
                 - index : The tile's index on the tilemap's spritesheet, or -1
                     for a blank tile.
         """
@@ -133,6 +152,27 @@ class TileMap(Image):
         ty = (ypos - top) // self.sheet.spriteheight
         return self.at(tx,ty)
 
+    def setSolidTiles(self, indices):
+        """Sets a list of tiles to be solid.
+
+           A solid tile can be the target of a collision.
+
+           @param indices: A list of spritesheet indices to be made solid.
+        """
+        for tile in self.tiles:
+            if self.at(*tile).index in indices:
+                self.tiles[tile].collidable = True
+
+    def setClearTiles(self, indices):
+        """Sets a list of tiles to be "clear" (i.e., not solid).
+
+           @param indices: A list of spritesheet indices to be made clear.
+        """
+
+        for tile in self.tiles:
+            if self.at(*tile).index in indices:
+                self.tiles[tile].collidable = False
+            
 
     @staticmethod
     def fromString(sheet, mapstring, *args, **kwargs):
@@ -197,5 +237,10 @@ if __name__ == '__main__':
 
     tilemap = TileMap.fromImage(sheet, "testmap.png", tileDict)
 
+    tilemap.setClearTiles(range(93,98))
+
+    for t in tilemap.tiles:
+        print tilemap.tiles[t].mask.outline()
     loop.add(tilemap)
+
     loop.loop()
