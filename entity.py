@@ -843,12 +843,13 @@ class Entity(Image):
 
             if dt > 0.001:
                 # linear motion
-                if self.drag and not self.acceleration:
+                if self.drag.x and not self.acceleration.x:
                     # drag is just deceleration when there's no acceleration
                     if abs(self.velocity.x) > abs(self.drag.x):
                         self.velocity.x -= (self.drag.x * util.sign(self.velocity.x))
                     else:
                         self.velocity.x = 0.0
+                if self.drag.y and not self.acceleration.y:
                     if abs(self.velocity.y) > abs(self.drag.y):
                         self.velocity.y -= (self.drag.y * util.sign(self.velocity.y))
                     else:
