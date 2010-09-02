@@ -51,6 +51,7 @@ class Image(Game.Sprite.DirtySprite):
            If a specific animation is being played, this is the index of the current
            frame in that animation's list.
        @ivar scroll: A L{Point} representing the "scroll factor" of this object.
+       @ivar name: A string identifying this image, if needed.
 
        @keyword x: The x position of the object, in pixels.
        @keyword y: The y position of the object, in pixels.
@@ -58,6 +59,7 @@ class Image(Game.Sprite.DirtySprite):
        @keyword height: The height of the object, in pixels.
        @keyword w: A synonym for C{width}.
        @keyword h: A synonym for C{height}.
+       @keyword name: An identifying name for this object.
        """
 ##    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
     def __init__(self, *args, **kwargs):
@@ -123,6 +125,9 @@ class Image(Game.Sprite.DirtySprite):
         # Parent/child relationships
         self._children = []
         self._parent = None
+
+        # name of this object
+        self.name = kwargs.get('name', '')
 
     ###
     # Image property, holding the surface currently active for this sprite
@@ -740,6 +745,13 @@ class Image(Game.Sprite.DirtySprite):
             y += self._parent.y
         return y
 
+    def __str__(self):
+        """Returns a useful string value for this image."""
+
+        s = "Image %s @ %s %.2f deg." % (self.name,self.position,self.angle)
+
+        return s
+
     ###
     # Helper methods
     ###
@@ -915,6 +927,14 @@ class Entity(Image):
                              doc='The angular velocity of this object')
 
     # angular acceleration doesn't need a property
+
+    def __str__(self):
+        """Returns a string representation of this object"""
+        s = "Entity %s @ %s, %d deg., V=%s, A=%s, aV=%s, aA=%d" % \
+            (self.name, self.position, self.angle, self.velocity, self.acceleration, \
+             self.angularVelocity, self.angularAcceleration)
+
+        return s
 
 class Tweener(Entity):
     """An object that can use interpolations.

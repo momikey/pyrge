@@ -241,7 +241,7 @@ if __name__ == '__main__':
     tilemap.setClearTiles(range(93,98))
 
     for t in tilemap.tiles:
-        print tilemap.tiles[t].mask.outline()
+        print tilemap.tiles[t]
     loop.add(tilemap)
 
     loop.loop()
