@@ -1,8 +1,9 @@
-import world, entity, util, text
+import pyrge
+from pyrge import world, entity, util, text
 import random
-from point import Vector
-from world import Game
-from quadtree import QuadTree
+from pyrge.point import Vector
+from pyrge.world import Game
+from pyrge.quadtree import QuadTree
 
 class Ship(entity.Entity):
     def __init__(self):

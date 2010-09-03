@@ -508,8 +508,8 @@ class Image(Game.Sprite.DirtySprite):
         if checkAlive and (not self.alive or not other.alive):
             # if one sprite isn't alive, there's no overlap
             return False
-        elif self is other:
-            # test for collision against itself
+        elif self is other or other is None:
+            # test for collision against itself or nothing
             return False
 
         # There are a few different collision-detection functions in pygame,
@@ -786,6 +786,12 @@ class Entity(Image):
                second (M{deg/s}).
            - angular acceleration: The accleration of this object's angular velocity,
                in degrees per second per second (M{deg/s**2}).
+
+       Entities also have a couple of extra attributes. First, "fixed" can be set
+       to create an Entity that is immune to velocity and acceleration effects.
+       Second, the "onFloor" flag can be used by platform-style games to indicate
+       that an Entity is resting on a solid object and should not have any
+       downward motion.
  
        The constructor arguments for L{Image} are all usable here.
 
@@ -800,6 +806,8 @@ class Entity(Image):
            fairly expensive in terms of CPU, setting this to False is a minor
            optimization.
        @ivar fixed: Whether this object is affected by velocity and acceleration.
+       @ivar onFloor: If this object is currently on top of a solide object, as
+           in a platformer game.
     """
 ##    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
     def __init__(self, *args, **kwargs):
@@ -834,6 +842,9 @@ class Entity(Image):
         # does this sprite move?
         self.fixed = False
 
+        # is this sprite on a solid object?
+        self.onFloor = False
+
     # general methods
     def update(self):
         """Updates this sprite for the next frame."""
@@ -856,10 +867,15 @@ class Entity(Image):
                         self.velocity.y = 0.0
 
                 self.velocity += self.acceleration * dt
-                if self.maxVelocity:
-                    if self.velocity.x > self.maxVelocity.x: self.velocity.x = self.maxVelocity.x
-                    if self.velocity.y > self.maxVelocity.y: self.velocity.y = self.maxVelocity.y
+                if self.maxVelocity is not None:
+                    if self.velocity.x > self.maxVelocity.x:
+                        self.velocity.x = self.maxVelocity.x
+                    if self.velocity.y > self.maxVelocity.y:
+                        self.velocity.y = self.maxVelocity.y
 
+                if self.onFloor:
+                    self.velocity.y = 0.0
+                    
                 self.x += self.velocity.x * dt
                 self.y += self.velocity.y * dt
 
@@ -887,7 +903,7 @@ class Entity(Image):
     def _set_velocity(self, val):
         if self.maxVelocity:
             _vx = min(self.maxVelocity[0], val[0])
-            _vy = min(self.maxVelocity[0], val[1])
+            _vy = min(self.maxVelocity[1], val[1])
             self._velocity = point.Vector(_vx, _vy)
         else:
             self._velocity = point.Vector(val)

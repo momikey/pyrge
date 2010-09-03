@@ -1,7 +1,8 @@
-import world, entity, util
+import pyrge
+from pyrge import world, entity, util
 import random
-from point import Vector
-from world import Game
+from pyrge.point import Vector
+from pyrge.world import Game
 
 class WrapSprite(entity.Entity):
     def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
