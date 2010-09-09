@@ -498,6 +498,13 @@ class Image(Game.Sprite.DirtySprite):
     def overlap(self, other, checkAlive=False):
         """Tests whether this object and another overlap.
 
+           This method uses a series of collision detection tests. First,
+           a bounding-box collision is tested (optionally using user-defined
+           C{hitbox} attributes). If the two objects' bounding boxes collide,
+           then, if both objects have a C{mask} attribute, a pixel-level
+           detection is performed, and its result returned. Otherwise, the
+           result of the bounding-box collision is returned.
+
            @note: An object is not considered to overlap itself.
 
            @param other: The object to check against this one.
@@ -512,26 +519,35 @@ class Image(Game.Sprite.DirtySprite):
             # test for collision against itself or nothing
             return False
 
-        # There are a few different collision-detection functions in pygame,
-        # so we choose which one we use based on which attributes exist in the
-        # two sprites. These are essentially in order from most specific to
-        # most general.
         if isinstance(other, Game.Rect):
             # pygame Rect objects don't have any sprite-like attributes,
             # so we treat them separately
             return self.rect.colliderect(other)
-        elif hasattr(self, "mask") or hasattr(other, "mask"):
-            return Game.Sprite.collide_mask(self, other)
-        elif hasattr(self, "hitbox"):
-            if hasattr(other, "hitbox"):
-                return self.hitbox.colliderect(other.hitbox)
-            else:
-                return self.hitbox.colliderect(other)
-        elif hasattr(other, "hitbox"):
-            return self.rect.colliderect(other.hitbox)
         else:
-            return Game.Sprite.collide_rect(self, other)
+            # First check a hitbox collision
+            if hasattr(self, "hitbox"):
+                sbox = self.hitbox
+            else:
+                sbox = self.rect
 
+            if hasattr(other, "hitbox"):
+                obox = other.hitbox
+            else:
+                obox = other.rect
+
+            boxcollision = sbox.colliderect(obox)
+
+            if not (hasattr(self, "mask") and hasattr(other, "mask")):
+                # there's no masks, so bounding boxes are the best we can get
+                return boxcollision
+            else:
+                # we have masks, so we can do pixel-perfect collision,
+                # but only if the bounding boxes actually overlap
+                if boxcollision:
+                    return Game.Sprite.collide_mask(self, other)
+                else:
+                    return False
+                    
     def collide(self, other, kill=False, checkAlive=True):
         """Performs collision detection and calls response methods.
 
