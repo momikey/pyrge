@@ -918,8 +918,13 @@ class Entity(Image):
 
     def _set_velocity(self, val):
         if self.maxVelocity:
-            _vx = min(self.maxVelocity[0], val[0])
-            _vy = min(self.maxVelocity[1], val[1])
+            _vx, _vy = val
+
+            if abs(self.maxVelocity.x) < abs(_vx):
+                _vx = self.maxVelocity.x * util.sign(_vx)
+            if abs(self.maxVelocity.y) < abs(_vy):
+                _vy = self.maxVelocity.y * util.sign(_vy)
+
             self._velocity = point.Vector(_vx, _vy)
         else:
             self._velocity = point.Vector(val)
@@ -950,8 +955,8 @@ class Entity(Image):
         return self._angular
 
     def _set_angularvelocity(self, val):
-        if self.maxAngularVelocity:
-            self._angular = max(self.maxAngularVelocity, val)
+        if self.maxAngularVelocity and abs(self.maxAngularVelocity) < abs(val):
+            self._angular = self.maxAngularVelocity * util.sign(val)
         else:
             self._angular = val
         self.dirty = 1
