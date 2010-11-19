@@ -46,7 +46,7 @@ class Text(entity.Image):
         # do these first, so we can use them for positioning
 
         # the actual text to render
-        self._text = kwargs.get('text', text)
+        self._text = self._replace_escaped(kwargs.get('text', text))
 
         # the font to use for rendering
         self._font = kwargs.get('font', Game.defaultFont)
@@ -135,11 +135,16 @@ class Text(entity.Image):
                 lines.append(text)
             return lines
 
+    def _replace_escaped(self, text):
+        """Helper method to replace non-newline special characters with printable equivalents"""
+        # TODO: handle other escaped characters
+        return text.replace('\t', '    ')
+
     def _get_text(self):
         return self._text
 
     def _set_text(self, txt):
-        self._text = txt
+        self._text = self._replace_escaped(txt)
         self._render_text()
 
     text = property(_get_text, _set_text, doc="The text of this object.")
@@ -189,7 +194,7 @@ if __name__ == '__main__':
     g = GameLoop()
     font = Game.Font.SysFont('dejavusans', 24)
 
-    t1 = Text("Testing Testing 123 qwerty uiop asdf ghjkl zxcv bnm", 320, 240,\
+    t1 = Text("Testing\tTesting 123 qwerty uiop asdf ghjkl zxcv bnm", 320, 240,\
               antialias=True, font=font, autowidth=True,\
               color = (0,0,0))
 

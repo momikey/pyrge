@@ -10,6 +10,7 @@ class Ship(entity.Entity):
         super(Ship, self).__init__(x=Game.width/2, y=Game.height-30)
         self.load("ship.png")
         self.scale(2,2,smooth=False)
+        self.lives = 3
         Game.world.addHandler(Game.event_types.KEYDOWN, self.onSpace)
 
     def update(self):
@@ -29,11 +30,25 @@ class Ship(entity.Entity):
         if evt.key == Game.Constants.K_SPACE:
             b = Game.world.getAvailableBullet(self)
             if b is not None:
-                b.reset(fired=self, position=self.position, vy=-200)
+                b.reset(fired=self, position=self.position, vy=-160)
 
     def kill(self):
+        self.lives -= 1
+        if self.lives < 1:
+            Game.world.lives.text = "Game Over"
+        else:
+            Game.world.lives.text = "Lives: %d" % self.lives
+            
         Game.world.removeHandler(Game.event_types.KEYDOWN, self.onSpace)
-        super(Ship, self).kill()
+        self.alive = self.visible = False
+##        super(Ship, self).kill()
+
+    def reset(self):
+        self.position = Game.width/2, Game.height-30
+        Game.world.addHandler(Game.event_types.KEYDOWN, self.onSpace)
+        self.alive = True
+        self.visible = True
+        
 
 class Bullet(entity.Entity):
     def __init__(self, pos):
@@ -149,6 +164,7 @@ class TheGame(world.World):
         for i in xrange(256):
             s = Shield(x=64+160*(i/64)+(i%8)*4, y=Game.height-100+(i%64)/8*4)
             self.shields.add(s)
+            
         self.add(self.shields)
 
         self.quadtree = QuadTree(self.shields.sprites())
@@ -160,6 +176,13 @@ class TheGame(world.World):
 
         self.fpsdisplay = FPS(font=Game.defaultFont)
         self.add(self.fpsdisplay)
+
+        self.lives = text.Text(x=50, y=Game.world.height-20, autowidth=True)
+        self.lives.text = "Lives: %d" % self.player.lives
+##        self.lives.position = (0,Game.world.height)
+        self.add(self.lives)
+
+        self.killTimer = 2000
 
     def update(self):
         collided = lambda f,s: f.collide(s,kill=True)
@@ -173,7 +196,10 @@ class TheGame(world.World):
         for b in vsshields:
             hit = self.quadtree.hit(b.rect)
             if hit:
-                [s.collide(b) for s in hit if s.alive]
+                for h in hit:
+                    if h.alive:
+                        h.collide(b)
+##                [s.collide(b) for s in hit if s.alive]
 
 ##        Game.Sprite.groupcollide(self.shields, \
 ##            Game.Sprite.Group(vsshields), False, False, shieldcollision)
@@ -182,6 +208,14 @@ class TheGame(world.World):
             self.aliens, False, False, collided)
         Game.Sprite.spritecollide(self.player, Game.Sprite.Group(self.alienbullets), \
             False, collided)
+
+##        self.lives._x, self.lives._y = self.lives.rect.center
+        if not self.player.alive:
+            self.killTimer -= Game.elapsed
+            if self.killTimer <= 0:
+                self.killTimer = 2000
+                self.player.reset()
+
         super(TheGame, self).update()
 
     def _overlapped(self, first, second):

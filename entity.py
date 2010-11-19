@@ -188,6 +188,7 @@ class Image(Game.Sprite.DirtySprite):
         self._children.append(child)
         child._parent = self
         child.add(*self.groups())
+        child._recenter()
 
     def removeChild(self, child):
         """Removes a child from this sprite.
@@ -201,6 +202,7 @@ class Image(Game.Sprite.DirtySprite):
             self._children.remove(child)
         child._parent = None
         child.remove(*self.groups())
+        child._recenter()
 
     @property
     def children(self):
@@ -563,15 +565,37 @@ class Image(Game.Sprite.DirtySprite):
             _l, _r, _t, _b = False, False, False, False
 
             # figure out which sides of the sprite are colliding
-            _lrect = Game.Rect(self.rect.left, self.rect.top, 1, self.rect.height-1)
-            _rrect = Game.Rect(self.rect.right-2, self.rect.top, 1, self.rect.height-1)
-            _trect = Game.Rect(self.rect.left, self.rect.top, self.rect.width-1, 1)
-            _brect = Game.Rect(self.rect.left, self.rect.bottom-2, self.rect.width-1, 1)
+##            _lrect = Game.Rect(self.rect.left, self.rect.top, 1, self.rect.height-1)
+##            _rrect = Game.Rect(self.rect.right-2, self.rect.top, 1, self.rect.height-1)
+##            _trect = Game.Rect(self.rect.left, self.rect.top, self.rect.width-1, 1)
+##            _brect = Game.Rect(self.rect.left, self.rect.bottom-2, self.rect.width-1, 1)
+##
+##            _l = _lrect.colliderect(other)
+##            _r = _rrect.colliderect(other)
+##            _t = _trect.colliderect(other)
+##            _b = _brect.colliderect(other)
 
-            _l = _lrect.colliderect(other)
-            _r = _rrect.colliderect(other)
-            _t = _trect.colliderect(other)
-            _b = _brect.colliderect(other)
+            # figure out which sides of this object are colliding,
+            # based on velocity/position data
+            selfvx,selfvy = self.velocity if hasattr(self, 'velocity') else 0,0
+            othervx,othervy = other.velocity if hasattr(other, 'velocity') else 0,0
+
+            if selfvx > othervx or (self.x < other.x and self.rect.right > other.rect.left):
+                # this object is approaching from the left
+                _l = True
+                
+            if selfvx < othervx or (self.x > other.x and self.rect.left < other.rect.right):
+                # this object is approaching from the right
+                _r = True
+
+            if selfvy > othervy or (self.y < other.y and self.rect.bottom > other.rect.top):
+                # this object is approaching from the top
+                _t = True
+
+            if selfvy < othervy or (self.y > other.y and self.rect.top < other.rect.bottom):
+                # this object is approaching from the bottom
+                _b = True
+            
 
             if kill:
                 self.kill()
