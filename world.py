@@ -20,8 +20,8 @@ class World(gameloop.GameLoop):
        @keyword height: The height of the screen.
        @keyword fps: The speed (frames per second) that the game should run.
     """
-    def __init__(self, width=640, height=480, fps=60):
-        super(World, self).__init__(width, height, fps)
+    def __init__(self, width=640, height=480, fps=60, scale=1):
+        super(World, self).__init__(width, height, fps, scale)
 
         # camera position (this is a basis position for all drawing)
         self.camera = point.Point(0, 0)
@@ -147,6 +147,7 @@ class World(gameloop.GameLoop):
 
 if __name__ == '__main__':
     w = World()
+
     assert w.getScreenRect() == Game.Rect(0,0,w.width,w.height), "Screen rect"
     assert w.getScreenCenter() == (w.width/2, w.height/2), "Screen center"
     w.followBounds()

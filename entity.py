@@ -582,19 +582,23 @@ class Image(Game.Sprite.DirtySprite):
 
             if selfvx > othervx or (self.x < other.x and self.rect.right > other.rect.left):
                 # this object is approaching from the left
-                _l = True
+                # so its right edge will be colliding
+                _r = True
                 
             if selfvx < othervx or (self.x > other.x and self.rect.left < other.rect.right):
                 # this object is approaching from the right
-                _r = True
+                # so its left edge will be colliding
+                _l = True
 
             if selfvy > othervy or (self.y < other.y and self.rect.bottom > other.rect.top):
                 # this object is approaching from the top
-                _t = True
+                # so its bottom will be colliding
+                _b = True
 
             if selfvy < othervy or (self.y > other.y and self.rect.top < other.rect.bottom):
                 # this object is approaching from the bottom
-                _b = True
+                # so its top will be colliding
+                _t = True
             
 
             if kill:

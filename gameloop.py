@@ -124,7 +124,7 @@ Game = Globals()
 class GameLoop(object):
     """An event-aware wrapper around the basic pygame loop"""
 
-    def __init__(self, width=640, height=480, fps=30, initmixer=True):
+    def __init__(self, width=640, height=480, fps=30, scale=1, initmixer=True):
         """Create a basic game structure. The parameters are:
             width: the width of the game window (default 640)
             height: the height of the game window (default 480)
@@ -168,6 +168,10 @@ class GameLoop(object):
         self.width = width
         self.height = height
         self.fps = fps
+
+        # the scale factor of graphics
+        # (all graphics will be scaled by this amount in both x and y directions)
+        self.scale = scale
 
         # copy some useful properties into the global structure
 
@@ -236,6 +240,17 @@ class GameLoop(object):
         self._entities.clear(self.screen, self.background)
         self._rectList = self._entities.draw(self.screen)
 
+        if self.scale != 1:
+            if self.scale == 2:
+                pygame.transform.scale2x(self.screen, self._realscreen)
+            else:
+                pygame.transform.scale(self.screen, (self.width, self.height), self._realscreen)
+            for r in self._rectList:
+                r.x *= self.scale
+                r.y *= self.scale
+                r.w *= self.scale
+                r.h *= self.scale
+
     def addHandler(self, evttype, func):
         """Add a handler for a specific type of event"""
         if not isinstance(evttype, int) or evttype > pygame.NUMEVENTS:
@@ -278,7 +293,12 @@ class GameLoop(object):
     def loop(self, flags=0):
         """Start the game"""
 
-        self.screen = pygame.display.set_mode((self.width, self.height), flags)
+        # fix scaling
+        if self.scale != 1:
+            self.screen = pygame.Surface((self.width/self.scale, self.height/self.scale), flags)
+            self._realscreen = pygame.display.set_mode((self.width, self.height), flags)
+        else:
+            self.screen = pygame.display.set_mode((self.width, self.height), flags)
 
         try:
             while True:
