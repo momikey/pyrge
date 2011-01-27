@@ -175,8 +175,8 @@ class TileMap(Image):
                 self.tiles[tile].collidable = False
             
 
-    @staticmethod
-    def fromString(sheet, mapstring, *args, **kwargs):
+    @classmethod
+    def fromString(cls, sheet, mapstring, *args, **kwargs):
         """Creates a new tilemap from a string.
 
            @param sheet: The SpriteSheet to use when creating the TileMap.
@@ -190,10 +190,10 @@ class TileMap(Image):
         for l in lines:
             rows.append([int(i) for i in l.split(',') if i != ''])
 
-        return TileMap(sheet, rows, *args, **kwargs)
+        return cls(sheet, rows, *args, **kwargs)
 
-    @staticmethod
-    def fromImage(sheet, image, colors, *args, **kwargs):
+    @classmethod
+    def fromImage(cls, sheet, image, colors, *args, **kwargs):
         """Creates a new tilemap from an image.
 
            @param sheet: The SpriteSheet to use when creating the TileMap.
@@ -219,7 +219,7 @@ class TileMap(Image):
                 thisRow.append(idx)
             rows.append(thisRow)
 
-        return TileMap(sheet, rows, *args, **kwargs)
+        return cls(sheet, rows, *args, **kwargs)
 
 if __name__ == '__main__':
     loop = GameLoop()

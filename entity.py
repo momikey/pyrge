@@ -739,6 +739,22 @@ class Image(Game.Sprite.DirtySprite):
         self.dirty = 1
         return self
 
+    @property
+    def left(self):
+        return self.x - self.width/2.
+
+    @property
+    def right(self):
+        return self.x + self.width/2.
+
+    @property
+    def top(self):
+        return self.y - self.height/2.
+
+    @property
+    def bottom(self):
+        return self.y + self.height/2.
+
     # size properties
 
     def __get_width(self):
@@ -919,9 +935,14 @@ class Entity(Image):
 
                 if self.onFloor:
                     self.velocity.y = 0.0
-                    
+
+                # move the entity, with hooks after moving by x and y
                 self.x += self.velocity.x * dt
+                self.onMoveX()
                 self.y += self.velocity.y * dt
+                self.onMoveY()
+                # hook for post-movement code (e.g., collision detection)
+                self.onMove()
 
                 # rotation
                 # Setting angular velocity or acceleration overrides the
@@ -939,6 +960,18 @@ class Entity(Image):
         self._recenter()
         super(Entity, self).update()
 
+    # per-frame update hooks
+    def onMove(self):
+        """A hook for an Entity's post-movement actions."""
+        pass
+
+    def onMoveX(self):
+        """A hook for actions taken after movement along the x axis."""
+        pass
+
+    def onMoveY(self):
+        """A hook for actions taken after movement along the y axis."""
+        pass
 
     # defining motion properties
     def _get_velocity(self):
