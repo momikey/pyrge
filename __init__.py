@@ -1,11 +1,22 @@
 # imports for Pyrge package
-__all__ = ['entity', 'gameloop', 'mixin', 'point', 'quadtree', 'spritesheet',
-           'text', 'tiledimage', 'tilemap', 'tween', 'tweenfunc', 'util',
+__all__ = ['entity',
+           'gameloop',
+           'mixin',
+           'music',
+           'point',
+           'quadtree',
+           'spritesheet',
+           'text',
+           'tiledimage',
+           'tilemap',
+           'tween',
+           'tweenfunc',
+           'util',
            'world']
 
 # convenience imports
-import entity, gameloop, mixin, point, text, tiledimage, tilemap, \
-	tween, tweenfunc, util, world
+import entity, gameloop, mixin, music, point, text, tiledimage, \
+       tilemap, tween, tweenfunc, util, world
 
 from gameloop import Game
 Constants = Game.Constants

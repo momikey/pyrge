@@ -37,7 +37,6 @@ class Globals(object):
     @cvar Font: The pygame font module.
     @cvar Mask: The pygame mask module.
     @cvar Sound: The Sound object in the pygame mixer module.
-    @cvar Music: The mixer submodule in the pygame mixer module.
     @cvar Image: The pygame image module.
     @cvar Timer: The pygame time module.
     @cvar Transform: The pygame transform module.
@@ -78,9 +77,6 @@ class Globals(object):
 
     # A sound effect
     Sound = pygame.mixer.Sound
-
-    # Background music (only one file available at a time)
-    Music = pygame.mixer.music
 
     # Functions for loading/saving images
     Image = pygame.image

@@ -128,7 +128,7 @@ class TileMap(Image):
         if ypos is None:
             ypos, xpos = divmod(xpos, self.columns)
 
-        if xpos < 0 or ypos < 0 or xpos > self.columns or ypos > self.rows:
+        if xpos < 0 or ypos < 0 or xpos >= self.columns or ypos >= self.rows:
             _tileid = None
         else:
             _tileid = self.themap[int(ypos)][int(xpos)]
