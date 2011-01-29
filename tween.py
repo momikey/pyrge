@@ -12,6 +12,8 @@ One or more L{Tween} objects can be attached to the L{Tweener} type of sprite
 to create a wider variety of effects than possible with only properties defined
 in the L{entity} classes."""
 
+__all__ = ['Tween']
+
 class Tween(object):
     """A customizable tween.
 

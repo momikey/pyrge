@@ -2,6 +2,8 @@ import math, point
 
 __doc__ = """Useful utility classes and functions for working with Pyrge."""
 
+__all__ = ['Struct', 'sign', 'vectorFromAngle']
+
 class Struct(object):
     """A simple struct class that can be initialized by keyword arguments."""
     def __init__(self, **entries):

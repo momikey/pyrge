@@ -11,6 +11,8 @@ __doc__ = """A spritesheet-based tilemap
              a L{SpriteSheet} object).
              """
 
+__all__ = ['TileMap']
+
 class TileMap(Image):
     """A simple tilemap created from a SpriteSheet object.
 

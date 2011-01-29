@@ -1,4 +1,4 @@
-import pygame.mixer.music
+import pygame
 
 __doc__ = """Module for streamed sound or music.
 
@@ -12,6 +12,8 @@ The Music object supports a variety of formats, including both sample-based
 (MP3, OGG) and pattern-based (MOD, XM) formats. Also, there are methods for
 playback control, including pause, stop, rewind, looping, and volume control.
 """
+
+__all__ = ['Music']
 
 class Music(object):
     """A background music object. The file passed to the constructor will

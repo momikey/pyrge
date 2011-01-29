@@ -5,6 +5,8 @@ __doc__ = """2D points and vectors
 The Point class is made to be lightweight, while the Vector class supports
 the full range of typical vector operations."""
 
+__all__ = ['Point', 'Vector', 'length', 'distance', 'rotate']
+
 class Point(object):
     """A lightweight 2D point.
 

@@ -10,6 +10,8 @@ scrolling (including parallax scrolling) and camera control (i.e., an object,
 usually the player, can be designated as the "focus", so the game engine always
 tries to center the display on that object)."""
 
+__all__ = ['World']
+
 class World(gameloop.GameLoop):
     """A game world that can be larger than the screen size.
 

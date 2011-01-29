@@ -14,6 +14,8 @@ original location. Sound objects could be used for music as well, at a higher
 memory cost.
 """
 
+__all__ = ['Sound']
+
 class Sound(object):
     """An object representing a sound effect. Pyrge's Sound object wraps the
        underlying pygame Sound and Channel objects to allow finer control of

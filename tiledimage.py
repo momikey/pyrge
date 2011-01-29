@@ -7,6 +7,8 @@ specialized subclass of L{Image} that repetitively blits a small bitmap across
 its surface, creating a textured or "tiled" appearance. This is often used in
 2D games to make blocky terrain or backgrounds."""
 
+__all__ = ['TiledImage']
+
 class TiledImage(entity.Image):
     """An image filled with tiles of a smaller image.
 

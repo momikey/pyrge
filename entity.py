@@ -17,6 +17,8 @@ from Image, but also adds functionality to control velocity and acceleration
 Finally, the L{Tweener} class is a subclass of Entity that adds support for
 interpolations, or tweens, which are defined in the tween module."""
 
+__all__ = ['Image', 'Entity', 'Tweener']
+
 class Image(Game.Sprite.DirtySprite):
     """A class representing any drawable object.
 

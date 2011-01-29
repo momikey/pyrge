@@ -5,6 +5,8 @@ from gameloop import Game, GameLoop
 
 __doc__ = """A simple sprite sheet"""
 
+__all__ = ['SpriteSheet']
+
 class SpriteSheet(object):
     """A simple spritesheet that can be created from an existing surface or
        loaded from an image file. 

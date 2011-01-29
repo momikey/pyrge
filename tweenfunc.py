@@ -11,6 +11,8 @@ the ending point, and the distance "through" the function, from 0.0 to 1.0.
 In addition, this module also defines a few "adapter" classes. These are intended
 to allow the use of interpolation with sequences, colors, and arbitrary objects."""
 
+__all__ = ['Linear', 'Smoothstep', 'QuadraticEaseIn', 'QuadraticEaseOut',
+           'Sine', 'Cosine', 'TweenFunction', 'ListTween', 'ColorTween']
 
 def Linear(start, end, percent):
     """A linear interpolator (lerp)."""

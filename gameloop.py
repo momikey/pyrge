@@ -18,6 +18,8 @@ that can be used to perform the game logic. For scrolling games, use L{World}.
     singleton, and Game is the sole instance of the class.
 """
 
+__all__ = ['GameLoop', 'Game']
+
 class Globals(object):
     """Useful game-specific values.
 

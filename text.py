@@ -10,6 +10,8 @@ it is completely compatible with the rest of Pyrge, but it is also almost totall
 self-contained, and can be used in other pygame-based applications with little
 effort."""
 
+__all__ = ['Text']
+
 class Text(entity.Image):
     """A text display class.
 

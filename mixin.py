@@ -7,6 +7,8 @@ sprites share, but are not common enough to warrant inclusion in the basic
 sprite classes of the L{entity} module. These mixin classes can be used with
 multiple inheritance to add these effects to a sprite."""
 
+__all__ = ['SpriteMixin', 'Bouncer', 'Wrapper', 'Clickable']
+
 class SpriteMixin(Game.Sprite.DirtySprite):
     """The base class for all mixins. You shouldn't make instances of this class;
        you should use a subclass instead."""

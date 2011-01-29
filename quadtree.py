@@ -6,6 +6,8 @@ The L{quadtree} module contains a single class, L{QuadTree},
 which represents a simple quadtree structure that can be used to hold static
 sprites for uses such as collision detection."""
 
+__all__ = ['QuadTree']
+
 # copied (with some modifications) from the pygame cookbook
 class QuadTree(object):
     """A static quadtree class.

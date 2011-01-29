@@ -5,6 +5,7 @@ __all__ = ['entity',
            'music',
            'point',
            'quadtree',
+           'sound',
            'spritesheet',
            'text',
            'tiledimage',
@@ -12,7 +13,8 @@ __all__ = ['entity',
            'tween',
            'tweenfunc',
            'util',
-           'world']
+           'world',
+           'Game', 'Constants', 'Point', 'Vector']
 
 # convenience imports
 import entity, gameloop, mixin, music, point, text, tiledimage, \
