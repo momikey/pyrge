@@ -851,9 +851,13 @@ class Entity(Image):
 
        Entities also have a couple of extra attributes. First, "fixed" can be set
        to create an Entity that is immune to velocity and acceleration effects.
-       Second, the "onFloor" flag can be used by platform-style games to indicate
-       that an Entity is resting on a solid object and should not have any
-       downward motion.
+       Second, the "rotating" flag, as its name suggests, indicates whether an object
+       is (or will be) rotating. This flag can be enabled to allow rotating images,
+       or disabled (the default) to speed up the rendering of Entities that do not
+       rotate.
+
+       Subclasses of Entity can override the L{onMove}, L{onMoveX}, and L{onMoveY}
+       "hooks" to create fine-grained motion control and collision detection/response.
  
        The constructor arguments for L{Image} are all usable here.
 
@@ -868,8 +872,6 @@ class Entity(Image):
            fairly expensive in terms of CPU, setting this to False is a minor
            optimization.
        @ivar fixed: Whether this object is affected by velocity and acceleration.
-       @ivar onFloor: If this object is currently on top of a solide object, as
-           in a platformer game.
     """
 ##    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
     def __init__(self, *args, **kwargs):
@@ -935,9 +937,6 @@ class Entity(Image):
                     if self.velocity.y > self.maxVelocity.y:
                         self.velocity.y = self.maxVelocity.y
 
-                if self.onFloor:
-                    self.velocity.y = 0.0
-
                 # move the entity, with hooks after moving by x and y
                 self.x += self.velocity.x * dt
                 self.onMoveX()
@@ -965,15 +964,24 @@ class Entity(Image):
     # per-frame update hooks
     def onMove(self):
         """A hook for an Entity's post-movement actions."""
-        pass
+        try:
+            super(Entity, self).onMove()
+        except AttributeError:
+            pass
 
     def onMoveX(self):
         """A hook for actions taken after movement along the x axis."""
-        pass
+        try:
+            super(Entity, self).onMoveX()
+        except AttributeError:
+            pass
 
     def onMoveY(self):
         """A hook for actions taken after movement along the y axis."""
-        pass
+        try:
+            super(Entity, self).onMoveY()
+        except AttributeError:
+            pass
 
     # defining motion properties
     def _get_velocity(self):
