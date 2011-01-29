@@ -249,7 +249,7 @@ class GameLoop(object):
     def addHandler(self, evttype, func):
         """Add a handler for a specific type of event"""
         if not isinstance(evttype, int) or evttype > pygame.NUMEVENTS:
-            raise ValueError, "Invalid event type"""
+            raise ValueError, "Invalid event type"
 
         self._evtHandlers[evttype].append(func)
         return self
@@ -257,7 +257,7 @@ class GameLoop(object):
     def removeHandler(self, evttype, func):
         """Remove an existing event handler"""
         if not isinstance(evttype, int) or evttype > pygame.NUMEVENTS:
-            raise ValueError, "Invalid event type"""
+            raise ValueError, "Invalid event type"
 
         hl = self._evtHandlers[evttype]
 

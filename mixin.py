@@ -80,11 +80,11 @@ class Clickable(SpriteMixin):
                another object on top of this one.
         """
         if (hasattr(self, "hitbox") and self.hitbox.collidepoint(event.pos)) or \
-           self.rect.collidepoint(event.pos):
+           self.rect.collidepoint(event.pos) and self.alive:
             self.click(event)
 
     def click(self, event):
-        """Handler for mouse clicks. Your subclasses must override this method
+        """Handler for mouse clicks. Your subclass must override this method
            if you want it to do anything.
 
            @param event: The pygame Event object that prompted this action.
