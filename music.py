@@ -1,6 +1,16 @@
 import pygame.mixer.music
 
-__doc__ = """
+__doc__ = """Module for streamed sound or music.
+
+The L{Music} class can be used to play any sound, but it is particularly
+useful for the playback of large music files, since it is optimized for
+low memory usage. This object builds on the functionality provided by Pygame,
+mainly by supporting more than a single music track. Only one track can be
+played at any time, but multiple Music objects can be created.
+
+The Music object supports a variety of formats, including both sample-based
+(MP3, OGG) and pattern-based (MOD, XM) formats. Also, there are methods for
+playback control, including pause, stop, rewind, looping, and volume control.
 """
 
 class Music(object):
@@ -101,10 +111,16 @@ class Music(object):
     def __get_endevent(self):
         return self.__endevent
 
-    def __set_endevent(self, evttype=None):
+    def __set_endevent(self, evttype):
         self.__endevent = evttype
         if Music.current == self.filename:
             if evttype is not None:
                 pygame.mixer.music.set_endevent(evttype)
             else:
                 pygame.mixer.music.set_endevent()
+
+    endevent = property(__get_endevent, __set_endevent, \
+                        doc="The type of pygame Event that will be posted after playback")
+
+if __name__ == '__main__':
+    pass

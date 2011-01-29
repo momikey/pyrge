@@ -36,7 +36,6 @@ class Globals(object):
     @cvar PixelArray: The pygame PixelArray object.
     @cvar Font: The pygame font module.
     @cvar Mask: The pygame mask module.
-    @cvar Sound: The Sound object in the pygame mixer module.
     @cvar Image: The pygame image module.
     @cvar Timer: The pygame time module.
     @cvar Transform: The pygame transform module.
@@ -74,9 +73,6 @@ class Globals(object):
 
     # A 2D bitmask that can be used for pixel-level collision detection
     Mask = pygame.mask
-
-    # A sound effect
-    Sound = pygame.mixer.Sound
 
     # Functions for loading/saving images
     Image = pygame.image
@@ -133,6 +129,7 @@ class GameLoop(object):
         # size = -16 (16-bit signed integers)
         # channels = 2 (stereo sound)
         # buffer = 4096
+        # TODO: make a way to support arbitary mixing values
         if initmixer:
             pygame.mixer.pre_init(frequency=44100)
 
