@@ -50,7 +50,7 @@ class Music(object):
            when playback is finished. (If looping, the event will be posted
            after each loop.)
         """
-        if Music.current != self.filename:
+        if not self.active:
             pygame.mixer.music.load(self.filename)
             Music.current = self.filename
         self.__pausetime = startpos
@@ -83,7 +83,7 @@ class Music(object):
     def unpause(self):
         """Resumes playback a paused music stream. This method is aware of
            multiple music streams, but it can't keep track of loops."""
-        if Music.current == self.filename:
+        if self.active:
             pygame.mixer.music.unpause()
         else:
             self.play(0, self.__pausetime)
@@ -96,8 +96,36 @@ class Music(object):
     def rewind(self):
         """Resets playback of this music to the beginning."""
         self.__pausetime = 0.0
-        if Music.current == self.filename:
+        if self.active:
             pygame.mixer.music.rewind()
+
+    @property
+    def playing(self):
+        """Whether this music object is currently playing"""
+        return self.active and pygame.mixer.music.get_busy()
+
+    @property
+    def active(self):
+        """Whether this music object is "active" (i.e., loaded and ready to play)"""
+        return Music.current == self.filename
+
+    @property
+    def position(self):
+        """The amount of time that this music object has been playing.
+
+           @return: Time (in milliseconds) that this object has been playing,
+           0.0 if the object is currently stopped, or None if the object not
+           the active music track.
+           @note: Using the C{startpos} argument of the L{play} method will
+           cause this property to be given relative to the starting position
+           of playback, not of the file itself.
+        """
+        if not self.active:
+            return None
+        elif not self.playing:
+            return 0.0
+        else:
+            return pygame.mixer.music.get_pos()
 
     def __get_volume(self):
         return self.__volume

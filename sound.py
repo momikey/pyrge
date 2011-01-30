@@ -58,7 +58,7 @@ class Sound(object):
         if self.__channel is not None:
             self.__channel.play(self.__sound, loops, maxtime, fadein)
             if self.panning:
-                self.__channel.set_volume(*self.__doPan())
+                self.__channel.set_volume(*self.__doPan(self.panning))
             if self.endevent is not None:
                 self.__channel.set_endevent(self.endevent)
 
@@ -100,7 +100,7 @@ class Sound(object):
     def __set_panning(self, pan):
         self.__panning = pan
         if self.__channel is not None:
-            self.__channel.set_volume(*self.__doPan())
+            self.__channel.set_volume(*self.__doPan(pan))
 
     panning = property(__get_panning, __set_panning, \
                        doc="The panning level of this sound, from full left (-1.0) to full right (1.0)")

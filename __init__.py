@@ -17,7 +17,7 @@ __all__ = ['entity',
            'Game', 'Constants', 'Point', 'Vector']
 
 # convenience imports
-import entity, gameloop, mixin, music, point, text, tiledimage, \
+import entity, gameloop, mixin, music, point, sound, text, tiledimage, \
        tilemap, tween, tweenfunc, util, world
 
 from gameloop import Game
