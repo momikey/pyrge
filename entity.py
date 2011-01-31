@@ -1155,7 +1155,7 @@ if __name__ == '__main__':
     e2.addTween(t, startnow=False)
     e2.addTween(t2, Tweener.LOOP, startnow=False)
     surf = Game.Surface((250,250), Game.Constants.SRCALPHA)
-    surf.fill(Game.NamedColors['white'])
+    surf.fill(Game.color('white'))
     e2.loadSurface(surf)
     e2.scroll = point.Point(0,0)
     e2.addChild(e)

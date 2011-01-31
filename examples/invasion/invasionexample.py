@@ -138,7 +138,7 @@ class FPS(text.Text):
     def __init__(self, **kwargs):
         super(FPS, self).__init__(**kwargs)
         self._autowidth = True
-        self.background = Game.NamedColors['black']
+        self.background = Game.color('black')
         self.update()
 
     def update(self):
@@ -156,7 +156,7 @@ class TheGame(world.World):
         self.aliens = []
         colors = ['blue', 'cyan', 'green', 'yellow', 'red']
         for i in xrange(50):
-            a = Alien(16 + (i%10)*64, 48 + (i/10)*64, Game.NamedColors[colors[i/10]])
+            a = Alien(16 + (i%10)*64, 48 + (i/10)*64, Game.color(colors[i/10]))
             self.aliens.append(a)
         self.add(self.aliens)
 

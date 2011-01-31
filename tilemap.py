@@ -227,7 +227,7 @@ if __name__ == '__main__':
     loop = GameLoop()
 
     bg = Game.Surface((loop.width, loop.height))
-    bg.fill(Game.NamedColors['lightskyblue'])
+    bg.fill(Game.color('lightskyblue'))
     loop.background = bg
     sheet = SpriteSheet('blocks1.bmp', spritewidth=32, spriteheight=32, \
                         xborder=2, yborder=2, borderleft=True, bordertop=True, colorkey=(0,0,0))

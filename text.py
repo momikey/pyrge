@@ -94,7 +94,7 @@ class Text(entity.Image):
         self.height = textheight
 
         # fix in case we're drawing black text
-        if self.background is None and self.color == Game.Color(0,0,0):
+        if self.background is None and self.color == Game.rgb(0,0,0):
             ALPHA = Game.Constants.SRCALPHA
         else:
             ALPHA = 0
@@ -202,10 +202,10 @@ if __name__ == '__main__':
 
     test = entity.Image(w=10, h=10)
     test.position = t1.position
-    test.pixels.fill(Game.NamedColors['white'])
+    test.pixels.fill(Game.color('white'))
 
     g.add(t1)
     g.add(test)
-    g.background.fill(Game.NamedColors['blue'])
+    g.background.fill(Game.color('blue'))
     g.loop()
     ### TODO: finish this later!!!

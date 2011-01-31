@@ -29,7 +29,6 @@ class Globals(object):
     for example, a Rect object by using Game.Rect instead of pygame.Rect, meaning that
     you don't need to use "import pygame" in your own game.
 
-    @cvar Color: The pygame Color object.
     @cvar NamedColors: A dictionary mapping common color names to Color objects.
     @cvar Rect: The pygame Rect object.
     @cvar Surface: The pygame Surface object.
@@ -47,11 +46,32 @@ class Globals(object):
         of the same name. (Example: event_types.KEYUP == pygame.KEYUP)
     """
 
-    # A color object, holding RGBA values
-    Color = pygame.Color
+    @staticmethod
+    def color(name):
+        """Create a Pygame Color object from a color name.
 
-    # A dictionary of named colors
-    NamedColors = pygame.color.THECOLORS
+           @param name: The name of a color. The name must be in Game.NamedColors.
+        """
+        return pygame.Color(name)
+
+    @staticmethod
+    def rgb(r, g, b, a=255):
+        """Create a Pygame Color object from RGB or RGBA values.
+
+           @param r: The red value of the desired color.
+           @param g: The green value of the color.
+           @param b: The blue value of the color.
+           @param a: The alpha value (transparency) of the color. Default is 255,
+               or fully opaque.
+        """
+        return pygame.Color(r,g,b,a)
+
+    @staticmethod
+    def randomcolor():
+        """Get a random named color."""
+        from random import choice
+        from pygame import color
+        return choice(color.THECOLORS.values())
 
     # A rectangle object (NOTE: pygame Rects only support integer coordinates)
     Rect = pygame.Rect

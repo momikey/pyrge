@@ -120,12 +120,14 @@ class Emitter(pyrge.entity.Image):
                       doc="The amount of variation in the emitter's angle (in degrees)")
 
 if __name__ == '__main__':
+    from gameloop import Game
+    
     class Box(pyrge.entity.Entity):
         def __init__(self, *args, **kwargs):
             kwargs['size'] = (2,2)
             super (Box, self).__init__(*args, **kwargs)
 
-            self.pixels.fill(random.choice(pyrge.Game.NamedColors.values()))
+            self.pixels.fill(Game.randomcolor())
             self.dirty = 1
 
     w = pyrge.world.World(fps=30)
