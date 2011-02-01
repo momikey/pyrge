@@ -101,7 +101,7 @@ if __name__ == '__main__':
             super(Ball, self).__init__(x=20, y=20, w=20, h=20)
 
             ball = Game.Surface((20,20), Game.Constants.SRCALPHA)
-            color = Game.NamedColors[random.choice(Game.NamedColors.keys())]
+            color = Game.randomcolor()
             Game.Draw.circle(ball, color, ball.get_rect().center, 10)
             self.loadSurface(ball)
 
@@ -119,6 +119,6 @@ if __name__ == '__main__':
 
     w = World()
     w.followBounds()
-    w.addHandler(Game.event_types.KEYDOWN, \
+    w.addHandler(Game.events.KEYDOWN, \
         lambda e: w.add(Ball()) if e.key == Game.Constants.K_SPACE else None)
     w.loop()

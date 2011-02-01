@@ -11,7 +11,7 @@ class Ship(entity.Entity):
         self.load("ship.png")
         self.scale(2,2,smooth=False)
         self.lives = 3
-        Game.world.addHandler(Game.event_types.KEYDOWN, self.onSpace)
+        Game.world.addHandler(Game.events.KEYDOWN, self.onSpace)
 
     def update(self):
         self.velocity.x = 0
@@ -39,13 +39,13 @@ class Ship(entity.Entity):
         else:
             Game.world.lives.text = "Lives: %d" % self.lives
             
-        Game.world.removeHandler(Game.event_types.KEYDOWN, self.onSpace)
+        Game.world.removeHandler(Game.events.KEYDOWN, self.onSpace)
         self.alive = self.visible = False
 ##        super(Ship, self).kill()
 
     def reset(self):
         self.position = Game.width/2, Game.height-30
-        Game.world.addHandler(Game.event_types.KEYDOWN, self.onSpace)
+        Game.world.addHandler(Game.events.KEYDOWN, self.onSpace)
         self.alive = True
         self.visible = True
         

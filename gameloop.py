@@ -29,7 +29,6 @@ class Globals(object):
     for example, a Rect object by using Game.Rect instead of pygame.Rect, meaning that
     you don't need to use "import pygame" in your own game.
 
-    @cvar NamedColors: A dictionary mapping common color names to Color objects.
     @cvar Rect: The pygame Rect object.
     @cvar Surface: The pygame Surface object.
     @cvar Draw: The pygame draw module.
@@ -38,11 +37,10 @@ class Globals(object):
     @cvar Font: The pygame font module.
     @cvar Mask: The pygame mask module.
     @cvar Image: The pygame image module.
-    @cvar Timer: The pygame time module.
     @cvar Transform: The pygame transform module.
     @cvar Constants: The pygame locals module, holding named constants
         representing key codes, event types, display flags, etc.
-    @cvar event_types: A Struct whose attributes point to the pygame events
+    @cvar events: A Struct whose attributes point to the pygame events
         of the same name. (Example: event_types.KEYUP == pygame.KEYUP)
     """
 
@@ -50,7 +48,8 @@ class Globals(object):
     def color(name):
         """Create a Pygame Color object from a color name.
 
-           @param name: The name of a color. The name must be in Game.NamedColors.
+           @param name: The name of a color. The valid color names can be found in
+           pygame.color.THECOLORS.
         """
         return pygame.Color(name)
 
@@ -73,6 +72,22 @@ class Globals(object):
         from pygame import color
         return choice(color.THECOLORS.values())
 
+    @staticmethod
+    def timer(evttype, milliseconds=0):
+        """Set an event timer.
+
+           This method will post recurring events of the given type after a
+           specified amount of time. This is a repeating timer, so events will
+           be posted until the timer is disabled (by calling this method with
+           C{milliseconds} set to 0) or the program ends.
+
+           @param evttype: The type of event to post. Event types are listed in
+           the L{events} structure.
+           @param milliseconds: The time between each event, or 0 to disable
+           this timer.
+        """
+        pygame.time.set_timer(evttype, milliseconds)
+           
     # A rectangle object (NOTE: pygame Rects only support integer coordinates)
     Rect = pygame.Rect
 
@@ -99,9 +114,6 @@ class Globals(object):
     # Functions for loading/saving images
     Image = pygame.image
 
-    # Functions for controlling timers
-    Timer = pygame.time
-
     # Functions for transforming (scaling, rotating, etc.) surfaces
     Transform = pygame.transform
 
@@ -114,7 +126,7 @@ class Globals(object):
     # Event types
     # Right now, we simply copy pygame's events into a Struct.
     # Later, we might use the USEREVENTs to do something.
-    event_types = Struct(
+    events = Struct(
         QUIT = pygame.QUIT,
         ACTIVEEVENT = pygame.ACTIVEEVENT,
         KEYDOWN = pygame.KEYDOWN,

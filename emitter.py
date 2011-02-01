@@ -8,7 +8,7 @@ a particular class, with random (but constrained) velocities. Each particle has
 its own lifetime, and is killed when that time expires.
 """
 
-__all__ = ['Emitter']
+__all__ = ['Emitter', 'CircleParticle', 'BoxParticle']
 
 class Emitter(pyrge.entity.Image):
     """A particle emitter.
@@ -22,10 +22,11 @@ class Emitter(pyrge.entity.Image):
        used as the base type of particle. Multiple instances of this class will
        be created and emitted when L{emit} is called.
     """
-    def __init__(self, particleType, x=0.0, y=0.0):
+    def __init__(self, particleType, x=0.0, y=0.0, **kwargs):
         super(Emitter, self).__init__(x,y,0,0)
 
         self.particleType = particleType
+        self.__particlekwargs = kwargs
         self._duration = 1.0        # seconds
         self._durationrange = 1.0   # seconds
         self._velocity = 100.0      # pixels/sec
@@ -45,7 +46,7 @@ class Emitter(pyrge.entity.Image):
             self._doEmit()
 
     def _doEmit(self, x=0.0, y=0.0):
-        p = self.particleType(position=(x,y))
+        p = self.particleType(position=(x,y), **self.__particlekwargs)
         p.duration = random.gauss(self.duration, self.durationRange/4.)
         a = pyrge.util.vectorFromAngle(random.gauss(self.emitAngle, self.spread/4.))
         p.velocity = random.gauss(self.velocity,self.velocity/4.) * a
@@ -119,26 +120,45 @@ class Emitter(pyrge.entity.Image):
     spread = property(__get_spread, __set_spread, \
                       doc="The amount of variation in the emitter's angle (in degrees)")
 
+# Quick and dirty example particles
+class CircleParticle(pyrge.entity.Entity):
+    """A simple circular particle.
+
+       @keyword radius: The radius of the particle.
+       @keyword color: The color of the particle.
+    """
+    def __init__(self, *args, **kwargs):
+        r = kwargs.get('radius', 1)
+        if not kwargs.get('size'):
+            kwargs['size'] = (r*2,r*2)
+        super(Circle, self).__init__(*args, **kwargs)
+
+        circle = pyrge.Game.Surface(kwargs['size'], pyrge.Constants.SRCALPHA)
+        pyrge.Game.Draw.circle(circle, kwargs.get('color', pyrge.Game.randomcolor()), \
+                           (r,r), r)
+        self.loadSurface(circle)
+
+class BoxParticle(pyrge.entity.Entity):
+    """A simple rectangular particle.
+
+       @keyword color: The color of the particle.
+    """
+    def __init__(self, *args, **kwargs):
+        super (Box, self).__init__(*args, **kwargs)
+
+        self.pixels.fill(kwargs.get('color', pyrge.Game.randomcolor()))
+        self.dirty = 1
+
 if __name__ == '__main__':
-    from gameloop import Game
-    
-    class Box(pyrge.entity.Entity):
-        def __init__(self, *args, **kwargs):
-            kwargs['size'] = (2,2)
-            super (Box, self).__init__(*args, **kwargs)
-
-            self.pixels.fill(Game.randomcolor())
-            self.dirty = 1
-
     w = pyrge.world.World(fps=30)
-    e = Emitter(Box,320,240)
-    e.duration = 1.0
-    e.durationRange = 0.3
+    e = Emitter(CircleParticle,320,240,radius=8, color=pyrge.Game.color('gold'))
+    e.duration = 3.0
+    e.durationRange = 1.0
     e.velocity = 80.0
     e.velocityRange = 30.0
     e.emitAngle = 0
-    e.spread = 180.0
+    e.spread = 360.0
     w.add(e)
-    w.addHandler(pyrge.Game.event_types.KEYDOWN, \
+    w.addHandler(pyrge.Game.events.KEYDOWN, \
         lambda evt: e.emit(12) if evt.key == pyrge.Constants.K_SPACE else None)
     w.loop()

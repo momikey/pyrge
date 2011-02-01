@@ -134,8 +134,8 @@ class Ship(WrapSprite):
         self.lives = 3
         self.warps = 5
 
-        Game.world.addHandler(Game.event_types.KEYDOWN, self.onSpace)
-        Game.world.addHandler(Game.event_types.KEYDOWN, self.onWarp)
+        Game.world.addHandler(Game.events.KEYDOWN, self.onSpace)
+        Game.world.addHandler(Game.events.KEYDOWN, self.onWarp)
 
     def update(self):
 
@@ -237,8 +237,8 @@ class TheGame(world.World):
             e.kill()
         self._entities.empty()
 
-        for h in self._evtHandlers[Game.event_types.KEYDOWN]:
-            self.removeHandler(Game.event_types.KEYDOWN, h)
+        for h in self._evtHandlers[Game.events.KEYDOWN]:
+            self.removeHandler(Game.events.KEYDOWN, h)
 
         self.addAsteroid()
         self.ship = Ship()
