@@ -253,6 +253,7 @@ def rotate(v, theta):
     return Vector(v).rotate(theta)
 
 # Testing starts here
+# TODO: make this into unit tests
 if __name__ == '__main__':
     p1 = Point()
     p2 = Point(1)
@@ -310,14 +311,3 @@ if __name__ == '__main__':
 
     assert bool(Vector(1,0)) and bool(Vector(3.1,4.5)) \
         and not bool(Vector(0.0, -0.0)), "Nonzero method failed"
-
-##    # speed test (this is no longer needed)
-##    import timeit
-##    print "Point speed test:", timeit.Timer('p = Point()',
-##        'from __main__ import Point').timeit()
-##    print "Vector speed test:", timeit.Timer('p = Vector()',
-##                       'from __main__ import Vector').timeit()
-##    print "Trig test 1:", timeit.Timer('a = Vector().angle()',
-##        'from __main__ import Vector').timeit()
-##    print "Trig test 2:", timeit.Timer('v = v.rotate(5)',
-##        'from __main__ import Vector\nv = Vector(1,0)').timeit()

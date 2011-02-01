@@ -151,6 +151,3 @@ class Music(object):
 
     endevent = property(__get_endevent, __set_endevent, \
                         doc="The type of pygame Event that will be posted after playback")
-
-if __name__ == '__main__':
-    pass

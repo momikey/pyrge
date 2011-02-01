@@ -146,11 +146,3 @@ class World(gameloop.GameLoop):
                     Game.scroll.x = self._followMax.x
                 if Game.scroll.y > self._followMax.y:
                     Game.scroll.y = self._followMax.y
-
-if __name__ == '__main__':
-    w = World()
-
-    assert w.getScreenRect() == Game.Rect(0,0,w.width,w.height), "Screen rect"
-    assert w.getScreenCenter() == (w.width/2, w.height/2), "Screen center"
-    w.followBounds()
-    assert w.getBounds() == Game.Rect(0,0,w.width,w.height), "Bounds rect"

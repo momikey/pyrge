@@ -350,10 +350,3 @@ class GameLoop(object):
                 Game.keymods = pygame.key.get_mods()
         finally:
             pygame.quit()
-
-
-# Testing starts here
-
-if __name__ == '__main__':
-    game = GameLoop()
-    game.loop()

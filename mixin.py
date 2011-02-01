@@ -90,35 +90,3 @@ class Clickable(SpriteMixin):
            @param event: The pygame Event object that prompted this action.
         """
         pass
-
-if __name__ == '__main__':
-    from entity import Entity
-    from world import World
-    import random, inspect, text
-
-    class Ball(Entity, Wrapper, Clickable):
-        def __init__(self):
-            super(Ball, self).__init__(x=20, y=20, w=20, h=20)
-
-            ball = Game.Surface((20,20), Game.Constants.SRCALPHA)
-            color = Game.randomcolor()
-            Game.Draw.circle(ball, color, ball.get_rect().center, 10)
-            self.loadSurface(ball)
-
-            self.velocity.x = random.randint(1,20)*16
-            self.velocity.y = random.randint(1,20)*16
-
-            self.hitbox = self.rect.inflate(10,10)
-
-        def update(self):
-            self.hitbox = self.rect.inflate(10,10)
-            super(Ball, self).update()
-
-        def click(self, e):
-            self.velocity *= -1
-
-    w = World()
-    w.followBounds()
-    w.addHandler(Game.events.KEYDOWN, \
-        lambda e: w.add(Ball()) if e.key == Game.Constants.K_SPACE else None)
-    w.loop()

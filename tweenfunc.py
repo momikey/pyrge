@@ -100,13 +100,3 @@ class ColorTween(ListTween):
             a = 255
 
         return color.Color(r,g,b,a)
-
-# Testing
-if __name__ == '__main__':
-    from pygame import color
-    ct = ColorTween(Smoothstep)
-    red = color.Color(*color.THECOLORS['red'])
-    cy = color.Color(*color.THECOLORS['cyan'])
-    for i in xrange(25):
-        print ct(red, cy, i/24.)
-

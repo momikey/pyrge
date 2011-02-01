@@ -134,6 +134,3 @@ class Sound(object):
     def sampleBuffer(self):
         """A buffer object containing the samples for this sound."""
         return self.__sound.get_buffer()
-
-if __name__ == '__main__':
-    pass

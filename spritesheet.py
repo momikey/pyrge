@@ -81,21 +81,3 @@ class SpriteSheet(object):
             spritey += self.yborder
 
         return self.sheet.subsurface((spritex,spritey,self.spritewidth,self.spriteheight))
-
-if __name__ == '__main__':
-    loop = GameLoop()
-    sheet = SpriteSheet('blocks1.bmp', spritewidth=32, spriteheight=32, \
-                        xborder=2, yborder=2, borderleft=True, bordertop=True, colorkey=(0,0,0))
-
-    for s in sheet.__dict__:
-        try:
-            print s, ":", sheet.__dict__[s]
-        except KeyError:
-            continue
-
-    sheet.sheet = sheet.sheet.convert(Game.Surface((1,1), Game.Constants.SRCALPHA))
-
-    d = entity.Image(32,32)
-    d.loadSurface(sheet.spriteAt(180))
-    loop.add(d)
-    loop.loop()

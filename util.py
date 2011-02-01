@@ -34,13 +34,3 @@ def vectorFromAngle(theta):
     # polar-to-rectangular is (r cos \theta, r sin \theta)
     # pygame's y-coordinate grows downward, hence the minus sign
     return point.Vector(math.cos(rad), -math.sin(rad))
-
-if __name__ == '__main__':
-    # testing
-    s = Struct(a=1, b=2, c=3)
-    print s
-
-    s.a = 'abc'
-    print s
-
-    print s.a, s.b, s.c

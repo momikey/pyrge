@@ -222,28 +222,3 @@ class TileMap(Image):
             rows.append(thisRow)
 
         return cls(sheet, rows, *args, **kwargs)
-
-if __name__ == '__main__':
-    loop = GameLoop()
-
-    bg = Game.Surface((loop.width, loop.height))
-    bg.fill(Game.color('lightskyblue'))
-    loop.background = bg
-    sheet = SpriteSheet('blocks1.bmp', spritewidth=32, spriteheight=32, \
-                        xborder=2, yborder=2, borderleft=True, bordertop=True, colorkey=(0,0,0))
-
-    tiles = """93,94,95,-1,-1,-1,96,97,
--1,-1,1,0,1,-1,90,90"""
-
-    tileDict = {(255,0,0): 93, (0,255,0): 94, (0,0,255): 95, (255,255,0): 96, (255,0,255): 97,
-                (0,255,255): 90, (128,128,128): 0, (204,204,204): 1}
-
-    tilemap = TileMap.fromImage(sheet, "testmap.png", tileDict)
-
-    tilemap.setClearTiles(range(93,98))
-
-    for t in tilemap.tiles:
-        print tilemap.tiles[t]
-    loop.add(tilemap)
-
-    loop.loop()

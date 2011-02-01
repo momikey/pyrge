@@ -113,20 +113,3 @@ class Tween(object):
             return "%.3f:%.3f@%.3f=%.3f" % (self.startval,self.endval,self.percent,self.value)
         else:
             return "%s:%s@%.3f=%s" % (self.startval, self.endval,self.percent,self.value)
-
-# Testing
-if __name__ == '__main__':
-    w = world.World(fps=30)
-
-    from point import Vector
-    tween = Tween(start=Vector(0,0), end=Vector(3,4), duration=1.0)
-    w.addUpdater(tween.start)
-    w.addUpdater(tween.update)
-
-    def printTween():
-        print tween, "\t", tween.value.length()
-
-    w.addUpdater(printTween)
-
-    w.loop()
-    print tween, "\t", tween.value.length()

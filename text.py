@@ -189,23 +189,3 @@ class Text(entity.Image):
     background = property(_get_bg, _set_bg, doc=\
             """The background color for this text object,
                or None if it should be transparent.""")
-
-# Testing starts here
-
-if __name__ == '__main__':
-    g = GameLoop()
-    font = Game.Font.SysFont('dejavusans', 24)
-
-    t1 = Text("Testing\tTesting 123 qwerty uiop asdf ghjkl zxcv bnm", 320, 240,\
-              antialias=True, font=font, autowidth=True,\
-              color = (0,0,0))
-
-    test = entity.Image(w=10, h=10)
-    test.position = t1.position
-    test.pixels.fill(Game.color('white'))
-
-    g.add(t1)
-    g.add(test)
-    g.background.fill(Game.color('blue'))
-    g.loop()
-    ### TODO: finish this later!!!

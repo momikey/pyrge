@@ -148,17 +148,3 @@ class BoxParticle(pyrge.entity.Entity):
 
         self.pixels.fill(kwargs.get('color', pyrge.Game.randomcolor()))
         self.dirty = 1
-
-if __name__ == '__main__':
-    w = pyrge.world.World(fps=30)
-    e = Emitter(CircleParticle,320,240,radius=8, color=pyrge.Game.color('gold'))
-    e.duration = 3.0
-    e.durationRange = 1.0
-    e.velocity = 80.0
-    e.velocityRange = 30.0
-    e.emitAngle = 0
-    e.spread = 360.0
-    w.add(e)
-    w.addHandler(pyrge.Game.events.KEYDOWN, \
-        lambda evt: e.emit(12) if evt.key == pyrge.Constants.K_SPACE else None)
-    w.loop()
