@@ -131,7 +131,7 @@ class CircleParticle(pyrge.entity.Entity):
         r = kwargs.get('radius', 1)
         if not kwargs.get('size'):
             kwargs['size'] = (r*2,r*2)
-        super(Circle, self).__init__(*args, **kwargs)
+        super(CircleParticle, self).__init__(*args, **kwargs)
 
         circle = pyrge.Game.Surface(kwargs['size'], pyrge.Constants.SRCALPHA)
         pyrge.Game.Draw.circle(circle, kwargs.get('color', pyrge.Game.randomcolor()), \
@@ -144,7 +144,7 @@ class BoxParticle(pyrge.entity.Entity):
        @keyword color: The color of the particle.
     """
     def __init__(self, *args, **kwargs):
-        super (Box, self).__init__(*args, **kwargs)
+        super (BoxParticle, self).__init__(*args, **kwargs)
 
         self.pixels.fill(kwargs.get('color', pyrge.Game.randomcolor()))
         self.dirty = 1

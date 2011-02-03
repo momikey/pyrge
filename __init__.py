@@ -1,5 +1,6 @@
 # imports for Pyrge package
-__all__ = ['entity',
+__all__ = ['emitter',
+           'entity',
            'gameloop',
            'mixin',
            'music',
@@ -17,8 +18,8 @@ __all__ = ['entity',
            'Game', 'Constants', 'Point', 'Vector', 'GameLoop', 'World']
 
 # convenience imports
-import entity, gameloop, mixin, music, point, sound, text, tiledimage, \
-       tilemap, tween, tweenfunc, util, world
+import entity, gameloop, util, world, mixin, music, point, sound, text, \
+       tiledimage, tilemap, tween, tweenfunc, emitter
 
 from gameloop import Game, GameLoop
 from world import World
