@@ -263,31 +263,3 @@ class Stage(Game.Sprite.LayeredDirty):
            (event type, handler function) pairs."""
         return self._eventHandlers
 
-if __name__ == '__main__':
-    # quick testing
-
-    def onClick(evt):
-        print "click", evt.button
-
-    def onKey(evt):
-        print "key", evt.unicode
-
-    class TestWorld(World):
-        def __init__(self):
-            super(TestWorld, self).__init__()
-
-            s1,s2 = Stage(),Stage()
-            s1.addHandler(Game.events.MOUSEBUTTONDOWN,onClick)
-            s2.addHandler(Game.events.KEYDOWN,onKey)
-            self.addHandler(Game.events.KEYDOWN,self.switchStage)
-
-            self.addStage(s1)
-            self.addStage(s2)
-            self.changeStage(0)
-
-        def switchStage(self, evt):
-            if evt.key == Game.Constants.K_SPACE:
-                self.changeStage(self._activeStage ^ 1)
-
-    w = TestWorld()
-    w.loop()

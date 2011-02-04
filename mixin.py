@@ -1,13 +1,17 @@
 from gameloop import Game
+from entity import Image
 
 __doc__ = """Mixin classes for game objects
 
 The L{mixin} module defines a few commonly used traits that many
 sprites share, but are not common enough to warrant inclusion in the basic
 sprite classes of the L{entity} module. These mixin classes can be used with
-multiple inheritance to add these effects to a sprite."""
+multiple inheritance to add these effects to a sprite.
 
-__all__ = ['SpriteMixin', 'Bouncer', 'Wrapper', 'Clickable']
+When using mixins, they should be listed first in an object's superclasses.
+"""
+
+__all__ = ['SpriteMixin', 'Bouncer', 'Wrapper', 'Clickable', 'Fader']
 
 class SpriteMixin(Game.Sprite.DirtySprite):
     """The base class for all mixins. You shouldn't make instances of this class;
@@ -90,3 +94,34 @@ class Clickable(SpriteMixin):
            @param event: The pygame Event object that prompted this action.
         """
         pass
+
+class Fader(SpriteMixin):
+    """A mixin that makes a sprite fade in brightness over a set period of time.
+
+       @todo: Add a Fader mixin that can be used with particle emitters, because
+           the duration property in this class clashes with the one that
+           Emitter adds to its children.
+
+       @keyword duration: The time the sprite should take to fade from full
+           brightness to zero, in seconds. At the end of this time, the sprite
+           will be destroyed by calling its C{kill} method.
+    """
+    def __init__(self, *args, **kwargs):
+        super(Fader, self).__init__(*args, **kwargs)
+
+        self.duration = kwargs.get('duration', 0)
+        self._fullDuration = self.duration
+        self.pixels.set_colorkey((0,0,0))
+
+    def update(self):
+        """Update the sprite for the next frame. If the C{duration} property is
+           0 or less, then the sprite's "lifetime" is up, and it will be killed."""
+        self.duration -= pyrge.Game.elapsed / 1000.
+        
+        if self.duration <= 0:
+            self.kill()
+        else:
+            alpha = int((self.duration / self._fullDuration) * 256) - 1
+            self.pixels.set_alpha(alpha)
+            super(Fader, self).update()
+

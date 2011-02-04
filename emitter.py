@@ -72,10 +72,10 @@ class Emitter(pyrge.entity.Image):
                         doc = "The average lifetime of a particle, in seconds.")
 
     def __get_durationRange(self):
-        return self._durationRange
+        return self._durationrange
 
     def __set_durationRange(self, seconds):
-        self._durationRange = seconds
+        self._durationrange = seconds
 
     durationRange = property(__get_durationRange, __set_durationRange, \
                              doc = """The amount that a particle's lifetime can differ
@@ -92,10 +92,10 @@ class Emitter(pyrge.entity.Image):
                         doc = "The average speed of a particle (in pixels/sec)")
 
     def __get_velocityRange(self):
-        return self._velocityRange
+        return self._velocityrange
 
     def __set_velocityRange(self, pixps):
-        self._velocityRange = pixps
+        self._velocityrange = pixps
 
     velocityRange = property(__get_velocityRange, __set_velocityRange, \
                              doc = """The amount that a particle's speed can differ
