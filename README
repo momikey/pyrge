@@ -1,6 +1,6 @@
 Pyrge - The Python Retro Game Engine
 
-Version 0.2
+Version 0.3
 
 (C) 2010 Michael Potter 
 (Licensed under the LGPL, see LICENSE file for full details)
@@ -102,7 +102,7 @@ Pyrge has a wide variety of objects, but the basic ones are these:
 	list of event handlers for each of the different types of Pygame
 	events.
 
-* World (pyrge.world.World)
+* World (pyrge.world.World or simply pyrge.World)
 
 	World is the other "stock" game class. A World differs from a GameLoop
 	in two key respects: World has a "camera" system, where an object
@@ -147,6 +147,16 @@ Pyrge has a wide variety of objects, but the basic ones are these:
 	Every game needs sound effects, and the Sound class is Pyrge's answer.
 	Playing and pausing are simple, but more advanced uses include fade-in
 	and fade-out as well as stereo panning.
+
+* Stage (pyrge.world.Stage)
+
+	Games with multiple levels can use Stage objects to manage them. These
+	objects keep track of a group of sprites (Images, Entities, whatever)
+	and their associated event handlers. You can add Stages to the World
+	and then switch from one to another, and only the sprites from the
+	"current" Stage will be drawn and updated. This is not only perfect for
+	levels, but it's also useful for menus, "Game Over" screens, pausing,
+	and so much more.
 
 * Game (pyrge.Game)
 

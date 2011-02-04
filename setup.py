@@ -8,7 +8,7 @@ INVASION_PNGS = ['ship.png', 'alien.png']
 
 setup(
 	name='pyrge', 
-	version='0.2',
+	version='0.3',
 	author="Michael Potter",
 	author_email="michael@potterpcs.net",
 	url="http://github.com/momikey/pyrge",

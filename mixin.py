@@ -71,7 +71,7 @@ class Clickable(SpriteMixin):
 
         # register a "click" handler
         # we use the MOUSEBUTTONDOWN event, since pygame has no MOUSECLICK event
-        Game.world.addHandler(Game.event_types.MOUSEBUTTONDOWN, self.__isClicked)
+        Game.world.addHandler(Game.events.MOUSEBUTTONDOWN, self.__isClicked)
 
     def __isClicked(self, event):
         """Helper method to determine whether this object was clicked.

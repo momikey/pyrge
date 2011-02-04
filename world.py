@@ -10,7 +10,7 @@ scrolling (including parallax scrolling) and camera control (i.e., an object,
 usually the player, can be designated as the "focus", so the game engine always
 tries to center the display on that object)."""
 
-__all__ = ['World']
+__all__ = ['World', 'Stage']
 
 class World(gameloop.GameLoop):
     """A game world that can be larger than the screen size.
@@ -44,6 +44,13 @@ class World(gameloop.GameLoop):
         # SDL uses 16-bit coordinates for drawing, so these are the maximum bounds
         # Range of a 16-bit integer = -32,678 to +32,767 (or -2**15 to 2**15 - 1)
         self._bounds = Game.Rect(-(1 << 15), (1 << 15)-1, (1 << 16)-1, (1 << 16)-1)
+
+        # the world's stages (game states)
+        self._stages = []
+
+        # the currently active stage, or None if no stage is active,
+        # or stages are not being used
+        self._activeStage = None
 
     # set a specific object as the camera's focus
     def follow(self, o, lead=None):
@@ -146,3 +153,141 @@ class World(gameloop.GameLoop):
                     Game.scroll.x = self._followMax.x
                 if Game.scroll.y > self._followMax.y:
                     Game.scroll.y = self._followMax.y
+
+    ###
+    # Stage control
+    # Stages are sprite groups that can be used as self-contained objects for
+    # game levels, menus, etc.
+    ###
+    def addStage(self, stage, stageid=None):
+        """Add a new stage to this world.
+
+           @param stage: The L{Stage} to add.
+           @param stagid: The index number of this Stage.
+        """
+        if stageid is None:
+            self._stages.append(stage)
+        else:
+            self._stages.insert(stageid, stage)
+
+    def removeStage(self, stage):
+        """Remove a stage from the world.
+
+           @param stage: The L{Stage} to remove.
+        """
+        while stage in self._stages:
+            del self._stages[self._stages.index(stage)]
+
+    def changeStage(self, newid):
+        """Change the active stage.
+
+           @param newid: The index number of the new L{Stage}.
+        """
+        self._entities.empty()
+        self.add(self._stages[newid])
+        self._entities.update = self._stages[newid].update
+
+        if self.activeStage is not None:
+            for et,fn in self.activeStage.handlers:
+                self.removeHandler(et,fn)
+        for et,fn in self._stages[newid].handlers:
+            self.addHandler(et,fn)
+        
+        self._activeStage = newid
+
+    @property
+    def activeStage(self):
+        "Returns the active L{Stage} object (Note: not that Stage's ID)."
+        if self._activeStage is not None:
+            return self._stages[self._activeStage]
+        else:
+            return None
+
+class Stage(Game.Sprite.LayeredDirty):
+    def __init__(self, *sprites, **kwargs):
+        """A self-contained stage or game state.
+
+           The Stage is an object that performs functions that other engines
+           might call "states" or "game worlds". It is little more than a sprite
+           group with added functionality for keeping track of event handlers.
+           These objects, which can contain any type of Pyrge sprite (L{Image},
+           L{Entity}, etc.), can be added to a World. The World, then, has a
+           list of Stages, but only one is active at a time. In other words,
+           Stages in a World are mutually exclusive. They do not interact, and,
+           normally, have no knowledge of each other. This makes them useful for
+           levels, menu structures, and many other parts of a game.
+
+           Each Stage can have its own background, either a solid color or an
+           L{Image}. The C{color} and C{background} keywords allow you to create
+           a Stage with either of these properties. (If both are specified,
+           C{color} is used.)
+
+           @keyword color: The solid background color for this Stage.
+           @keyword background: The background Image for this Stage.
+        """
+        super(Stage, self).__init__(*sprites, **kwargs)
+
+        if 'color' in kwargs:
+            bgcolor = pyrge.entity.Image(position=Game.world.getScreenCenter(),\
+                                              size=(Game.width,Game.height))
+            bgcolor.pixels.fill(kwargs.get('color', 0))
+            self.add(bgcolor)
+            bgcolor.background()
+        elif 'background' in kwargs:
+            bg = kwargs['background']
+            self.add(bg)
+            bg.background()
+
+        # Stages only need to store tuples of (type, handler)
+        self._eventHandlers = []
+
+    def addHandler(self, evttype, func):
+        """Add an event handler to this Stage.
+
+           @param evttype: The type of event to handle.
+           @param func: The event handler function.
+        """
+        self._eventHandlers.append((evttype, func))
+
+    def removeHandler(self, evttype, func):
+        """Remove an event handler from this Stage.
+
+           @param evttype: The type of event.
+           @param func: The handler function to remove.
+        """
+        self._eventHandlers = [e for e in self._eventHandlers if e != (evttype,func)]
+
+    @property
+    def handlers(self):
+        """The event handlers that this stage contains. This is a list of
+           (event type, handler function) pairs."""
+        return self._eventHandlers
+
+if __name__ == '__main__':
+    # quick testing
+
+    def onClick(evt):
+        print "click", evt.button
+
+    def onKey(evt):
+        print "key", evt.unicode
+
+    class TestWorld(World):
+        def __init__(self):
+            super(TestWorld, self).__init__()
+
+            s1,s2 = Stage(),Stage()
+            s1.addHandler(Game.events.MOUSEBUTTONDOWN,onClick)
+            s2.addHandler(Game.events.KEYDOWN,onKey)
+            self.addHandler(Game.events.KEYDOWN,self.switchStage)
+
+            self.addStage(s1)
+            self.addStage(s2)
+            self.changeStage(0)
+
+        def switchStage(self, evt):
+            if evt.key == Game.Constants.K_SPACE:
+                self.changeStage(self._activeStage ^ 1)
+
+    w = TestWorld()
+    w.loop()
