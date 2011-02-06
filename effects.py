@@ -8,7 +8,7 @@ __doc__ = """Special effects
 This module contains special effects, camera tricks, and anything else that
 doesn't really have a place in the rest of Pyrge."""
 
-__all__ = ['Effect','Quake']
+__all__ = ['Effect','Quake','Fade']
 
 class Effect(object):
     """A generic camera effect. This does nothing by itself, but gives the
@@ -125,3 +125,79 @@ class Quake(Effect):
         rx = random.uniform(-self.intensity*Game.width,self.intensity*Game.width)
         ry = random.uniform(-self.intensity*Game.height,self.intensity*Game.height)
         Game.scroll = self.__origscroll + point.Vector(rx,ry)
+
+class Fade(Effect):
+    """A camera fading effect.
+
+       The Fade object simulates a fade-in or fade-out transition by blocking
+       the game camera with a black image that changes in transparency.
+
+       @keyword fadeout: Whether this effect should be a fade-out (default of
+           True) or a fade-in (False).
+       @keyword color: The solid color of the fully opaque filter. This will be
+           the ending color (for fade-outs) or the beginning color (for
+           fade-ins), and will be blended with the game world during the fade.
+
+       @ivar image: The filter image.
+       @ivar color: The color of the fade filter.
+    """
+    def __init__(self, fadeout=True, color=(0,0,0)):
+        super(Fade, self).__init__()
+        
+        # make an image that will fill the screen
+        self.image = entity.Image(position=Game.world.getScreenCenter(),\
+                           size=(Game.width,Game.height))
+        self.image.pixels.fill(color)
+        self.color = color
+        self.__fadeDirection = fadeout
+        self.image.pixels.set_alpha(0 if fadeout else 255)
+        self.paused = False
+
+    def start(self, duration=1.0, aftereffect=0.0):
+        """Start a fade of a given duration, with an optional "holding" effect
+           at the end.
+
+           @keyword duration: The time taken by the fade, in seconds.
+           @keyword aftereffect: The time that the fade will be held at its
+               ending point before stopping. The Fade's C{stop} method will be
+               called after a total time of C{duration + aftereffect}.
+        """
+        self.__fadeDuration = duration
+        self.__afterDuration = aftereffect
+        self.duration = duration + aftereffect
+        self.image.pixels.set_alpha(0)
+        super(Fade, self).start()
+        
+        # add the filter
+        Game.world.add(self.image)
+        self.image.foreground()
+        
+        # force an update immediately
+        self.update()
+
+    def stop(self):
+        """Stop the fading effect. This will be called automatically when the
+           effect's duration reaches 0, but a game can call it early to stop
+           the effect prematurely."""
+        Game.world.remove(self.image)
+        super(Fade, self).stop()
+
+    def pause(self):
+        """Pause or resume the fade effect. This method can be used to stop the
+           fade without removing the filter image. If the effect is already
+           paused, calling C{pause} again will resume the fade."""
+        self.paused = not self.paused
+        
+    def effect(self):
+        """The fade effect, updated for each frame. This does nothing more than
+           change the alpha (transparency) value of the filter image until it
+           reaches 0 (fade-in) or 255 (fade-out)."""
+        if self.duration > self.__afterDuration and not self.paused:
+            a = (self.duration - self.__afterDuration) / \
+                self.__fadeDuration * 256 - 1
+            self.image.pixels.set_alpha(a if not self.__fadeDirection else 255-a)
+
+    @property
+    def running(self):
+        """Whether this effect is currently running. (A paused fade is not running.)"""
+        return self.duration > 0 and not self.paused
