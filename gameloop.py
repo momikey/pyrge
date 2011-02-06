@@ -320,6 +320,15 @@ class GameLoop(object):
         self.background = pygame.Surface((self.width, self.height))
         return self
 
+    def __get_bgcolor(self):
+        return self.background.get_at((0,0))
+    
+    def __set_bgcolor(self, color):
+        self.background.fill(color)
+
+    backgroundColor = property(__get_bgcolor, __set_bgcolor, \
+                               doc="The background color of the game screen.")
+
     def loop(self, flags=0):
         """Start the game"""
 
