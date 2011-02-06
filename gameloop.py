@@ -256,7 +256,10 @@ class GameLoop(object):
     def getEntities(self, etype=None):
         """Get all the entities in the display list, or those of a specific type"""
         if etype is not None:
-            es = [_e for _e in self._entities if isinstance(_e, etype)]
+            if isinstance(etype, basestring):
+                es = [_e for _e in self._entities if _e.name == etype]
+            else:
+                es = [_e for _e in self._entities if isinstance(_e, etype)]
         else:
             es = self._entities.sprites()
 
