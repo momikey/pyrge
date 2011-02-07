@@ -16,7 +16,8 @@ __all__ = ['effects',
            'tweenfunc',
            'util',
            'world',
-           'Game', 'Constants', 'Point', 'Vector', 'GameLoop', 'World']
+           'Game', 'Constants', 'Point', 'Vector',
+           'GameLoop', 'World', 'Image', 'Entity']
 
 # convenience imports
 import entity, gameloop, util, world, mixin, music, point, sound, text, \
