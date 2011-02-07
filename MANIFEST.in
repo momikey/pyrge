@@ -1,4 +1,4 @@
 include *.py
 include README LICENSE
-recursive-include examples *.py *.png
+recursive-include examples *.py *.png *.bmp
 exclude examples/gametest.py
