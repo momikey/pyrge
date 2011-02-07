@@ -229,9 +229,10 @@ class Image(Game.Sprite.DirtySprite):
            @return: This object, to allow for chained methods.
         """
         self.pixels = Game.Image.load(fname)
-        self.dirty = 1          # force a redraw
         self.rect.size = self.image.get_size()
         self._w, self._h = self.rect.size
+        self._recenter()
+        self.dirty = 1          # force a redraw
         return self
 
     # load an image and rotate it
@@ -245,9 +246,10 @@ class Image(Game.Sprite.DirtySprite):
         """
         self.pixels = Game.Image.load(fname)
         self.angle = angle
-        self.dirty = 1          # force a redraw
         self.rect.size = self.image.get_size()
         self._w, self._h = self.rect.size
+        self._recenter()
+        self.dirty = 1          # force a redraw
         return self
 
     # load an animation frame
@@ -327,10 +329,11 @@ class Image(Game.Sprite.DirtySprite):
            @return: This object, for chaining.
         """
         self.pixels = surf
-        self.dirty = 1      # force a redraw
         self.rect = self.image.get_rect()
         self.rect.center = (self._x, self._y)
         self._w, self._h = self.rect.size
+        self._recenter()
+        self.dirty = 1          # force a redraw
         return self
 
     ###
