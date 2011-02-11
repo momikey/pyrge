@@ -340,18 +340,32 @@ class Image(Game.Sprite.DirtySprite):
     # Animation control
     ###
 
-    def addAnimation(self, name, frames):
+    def addAnimation(self, name, frames, multiplier=None):
         """Adds an animation using a list of frames.
+
+           An animation can be specified by a list of the image's frames
+           that have been loaded by the L{loadFrame} method. If the
+           C{multiplier} argument is present, then each entry in the
+           animation's frame list will occur that many times. Example:
+           C{image.addAnimation('name', [0,1,2], 2)} has the same result
+           as calling C{image.addAnimation('name', [0,0,1,1,2,2])}.
 
            @param name: The name to be used to refer to this animation.
            @param frames: A list of frame numbers that make up this
                animation.
+           @param multiplier: Each entry in the list of frames will be
+               multiplied by this amount, slowing down the animation.
            @return: This object, for chaining.
         """
-        if not self._animations.has_key(name):
-            self._animations[name] = frames
+        if multiplier is None:
+            framelist = frames
         else:
-            self._animations[name] += frames
+            framelist = [f for f in frames for _ in xrange(int(multiplier))]
+            
+        if not self._animations.has_key(name):
+            self._animations[name] = framelist
+        else:
+            self._animations[name] += framelist
 
         return self
 
@@ -370,22 +384,43 @@ class Image(Game.Sprite.DirtySprite):
     def play(self, name=None, startFrame=None):
         """Starts an animation (if given a name) or all animation frames.
 
+           If the requested animation is currently playing, it will only be
+           restarted if the C{startframe} argument is given. Otherwise,
+           there is no effect.
+
            @param name: The name of the animation to play, or None if all
                the object's animation frames should be used.
            @param startFrame: The index of the frame where animation should start.
            @return: This object, for chaining.
         """
         self.animated = True
-        if name is not None:
-            self.currentAnimation = name
+        if name == self.currentAnimation:
+            # calling an already playing animtion does nothing,
+            # unless a specific start frame is requested
+            if startFrame is not None:
+                self.currentFrame = startFrame
+                
+        else:
+            if name is not None:
+                self.currentAnimation = name
 
-        self.currentFrame = startFrame if startFrame is not None else 0
+            self.currentFrame = startFrame if startFrame is not None else 0
 
         return self
 
     def stop(self):
         """Stops animation of this object. This does not remove any animations."""
         self.animated = False
+        return self
+
+    def showFrame(self, frameid):
+        """Shows a specific frame, without animation."""
+        
+        self.pixels = self._frames[frameid]
+        self._w, self._h = self.rect.size = self.image.get_size()
+        self._recenter()
+        self.dirty = 1
+
         return self
 
     ###
