@@ -1,4 +1,4 @@
-import entity
+import entity, util
 from gameloop import Game, GameLoop
 
 __doc__ = """A text object
@@ -120,27 +120,31 @@ class Text(entity.Image):
 
     def _wrap(self, text):
         """This is a helper method to calculate where a line should break when wrapping."""
-        lines = []
-        linelength = self._font.size(text)[0]
-        if linelength <= self.width:
-            # line is short enough, we don't need to do anything
-            lines.append(text)
-            return lines
+        if '\n' in text:
+            return list(util.flatten([self._wrap(l) for l in text.split('\n')]))
         else:
-            breakpoint = text.rfind(' ',0,len(text)*self.width/linelength)
-            if breakpoint != -1:
-                # we found a word break
-                lines.append(text[:breakpoint])
-                lines.extend(self._wrap(text[breakpoint+1:]))
-            else:
-                # there's no word break, so nothing we can do
+            lines = []
+            linelength = self._font.size(text)[0]
+            if linelength <= self.width:
+                # line is short enough, we don't need to do anything
                 lines.append(text)
-            return lines
+                return lines
+            else:
+                breakpoint = text.rfind(' ',0,len(text)*self.width/linelength)
+                if breakpoint != -1:
+                    # we found a word break
+                    lines.append(text[:breakpoint])
+                    lines.extend(self._wrap(text[breakpoint+1:]))
+                else:
+                    # there's no word break, so nothing we can do
+                    lines.append(text)
+                return lines
 
     def _replace_escaped(self, text):
         """Helper method to replace non-newline special characters with printable equivalents"""
         # TODO: handle other escaped characters
-        return text.replace('\t', '    ')
+        # TODO: better cross-platform EOL support
+        return text.replace('\t', '    ').replace('\r', '\n')
 
     def _get_text(self):
         return self._text

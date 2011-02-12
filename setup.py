@@ -11,7 +11,7 @@ DATA_FILES += TUTORIALS
 
 setup(
 	name='pyrge', 
-	version='0.3',
+	version='0.4',
 	author="Michael Potter",
 	author_email="michael@potterpcs.net",
 	url="http://github.com/momikey/pyrge",

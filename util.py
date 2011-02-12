@@ -34,3 +34,21 @@ def vectorFromAngle(theta):
     # polar-to-rectangular is (r cos \theta, r sin \theta)
     # pygame's y-coordinate grows downward, hence the minus sign
     return point.Vector(math.cos(rad), -math.sin(rad))
+
+def flatten(seq):
+    """Flattens a sequence, changing the elements of any subsequences into
+       "top-level" elements. Example: The list [[a,b[,c,[d,e,f]] flattens
+       into [a,b,c,d,e,f]
+
+       @param seq: The sequence (list, tuple, etc.) to flatten.
+       
+       @return: A flattened list as a generator.
+    """
+    for item in seq:
+        try:
+            # sublists
+            for subitem in item:
+                yield subitem
+        except TypeError:
+            # regular element
+            yield item
