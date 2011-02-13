@@ -1,4 +1,5 @@
 import entity, gameloop, point
+from gameloop import Game
 
 __doc__ = """A tiled image, as used for backgrounds and terrain
 
@@ -18,22 +19,34 @@ class TiledImage(entity.Image):
        that a "textured" image is needed.
 
        @note: TiledImage is a subclass of L{Image}, and can take all of its
-           constructor arguments. However, the position of a  TiledImage is
+           constructor arguments. However, the position of a TiledImage is
            that of its top-left corner, not its center.
 
-       @param img: A pygame Surface object containing the bitmap to be used
-           as the "tile".
+       @param img: An object with the bitmap to be used as the "tile". This
+           can be a Pyrge L{Image}, a Pygame Surface, or a string containing
+           a filename.
     """
     def __init__(self, img, *args, **kwargs):
-        self._tileimage = img       # img must be a Surface
-
         super(TiledImage, self).__init__(*args, **kwargs)
+
+        if isinstance(img, Game.Surface):
+            # if we got a Surface
+            self._tileimage = img
+        elif isinstance(img, entity.Image):
+            # if we got a Pyrge Image
+            self._tileimage = img.pixels
+        elif isinstance(img, basestring):
+            # if we got a filename
+            self._tileimage = entity.Image().load(img).pixels
+        else:
+            # don't know what to do
+            raise TypeError, "Unable to find tile image"
 
         # in case we didn't get passed a width or height
         if self.width == 0.0:
-            self.width = img.get_width()
+            self.width = self._tileimage.get_width()
         if self.height == 0.0:
-            self.height = img.get_height()
+            self.height = self._tileimage.get_height()
 
         # change position semantics from center to top-left
         self.x += self.width/2
