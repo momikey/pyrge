@@ -179,6 +179,10 @@ class Image(Game.Sprite.DirtySprite):
         # but we have this here to allow for mixins
         super(Image, self).update()
 
+    def redraw(self):
+        """Force a redraw of this sprite next frame."""
+        self.dirty = 1
+
     ###
     # Child methods
     ###
