@@ -83,9 +83,13 @@ class Text(entity.Image):
     def _render_text(self):
         """This is a helper method to render text to a surface with wrapping."""
         if self._autowidth:
+            # "autowidth" means one line, no wrapping, and the left edge
+            # stays in the same place
             textlines = [self.text]
             textheight = self.font.get_linesize()
+            oldleft = self.left
             self.width = self.font.size(self.text)[0]
+            self.x = oldleft + self.width/2.
         else:
             textlines = self._wrap(self.text)
             textheight = len(textlines) * self.font.get_linesize()
