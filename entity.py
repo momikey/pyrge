@@ -421,6 +421,7 @@ class Image(Game.Sprite.DirtySprite):
         """Shows a specific frame, without animation."""
         
         self.pixels = self._frames[frameid]
+        self.currentFrame = frameid
         self._w, self._h = self.rect.size = self.image.get_size()
         self._recenter()
         self.dirty = 1
