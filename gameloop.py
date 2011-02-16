@@ -329,6 +329,16 @@ class GameLoop(object):
     backgroundColor = property(__get_bgcolor, __set_bgcolor, \
                                doc="The background color of the game screen.")
 
+    def __get_title(self):
+        return pygame.display.get_caption[0]
+
+    def __set_title(self, title):
+        pygame.display.set_caption(title)
+
+    title = property(__get_title, __set_title,
+                     doc="""The caption that will be shown in the game window's
+                     title bar.""")
+
     def loop(self, flags=0):
         """Start the game"""
 

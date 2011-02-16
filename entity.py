@@ -948,9 +948,6 @@ class Entity(Image):
         # does this sprite move?
         self.fixed = False
 
-        # is this sprite on a solid object?
-        self.onFloor = False
-
     # general methods
     def update(self):
         """Updates this sprite for the next frame."""
