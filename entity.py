@@ -428,6 +428,32 @@ class Image(Game.Sprite.DirtySprite):
 
         return self
 
+    def addFrame(self, frame, frameid=None):
+        """Adds a frame to the sprite.
+
+           @note: This method does not update animation frame lists.
+           @param frame: A Pygame Surface (such as an L{Image}'s C{pixels}
+               property) to use as the animation frame.
+           @param frameid: The index number of the frame. If None, then the
+               frame will be added to the end of the list.
+           @return: The index number of the frame.
+        """
+        if frameid is None:
+            self._frames.append(frame)
+        else:
+            self._frames.insert(frameid, frame)
+        return frameid if frameid is not None else len(self._frames)
+
+    def removeFrame(self, frame):
+        """Removes a frame from the sprite.
+
+           @note: This method does not update the frame lists of
+               the sprite's animations.
+           @param frame: The index number of the frame to remove.
+        """
+        while frame in self._frames:
+            del self._frames[self._frames.index(frame)]
+
     ###
     # Layer (foreground/background) control
     ###

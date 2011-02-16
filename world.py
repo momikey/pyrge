@@ -164,11 +164,13 @@ class World(gameloop.GameLoop):
 
            @param stage: The L{Stage} to add.
            @param stagid: The index number of this Stage.
+           @return: The index number of the Stage.
         """
         if stageid is None:
             self._stages.append(stage)
         else:
             self._stages.insert(stageid, stage)
+        return stageid if stageid is not None else len(self._stages) - 1
 
     def removeStage(self, stage):
         """Remove a stage from the world.
