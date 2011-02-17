@@ -1,31 +1,10 @@
-import pyrge
-from pyrge import world, entity, util
 import random
-from pyrge.point import Vector
-from pyrge.world import Game
+from pyrge import *
 
 MAX_X = 640
 MAX_Y = 420
 
-class WrapSprite(entity.Entity):
-    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
-        super(WrapSprite, self).__init__(x,y,w,h)
-
-    def update(self):
-        super(WrapSprite, self).update()
-
-        if self.alive:
-            if self.x > MAX_X:
-                self.x = 0
-            elif self.x < 0:
-                self.x = MAX_X - 1
-
-            if self.y > MAX_Y:
-                self.y = 0
-            elif self.y < 0:
-                self.y = MAX_Y - 1
-
-class Asteroid(WrapSprite):
+class Asteroid(Entity, mixin.Wrapper):
     LARGE = 0
     MEDIUM = 1
     SMALL = 2
@@ -123,7 +102,7 @@ class Asteroid(WrapSprite):
 
         return newa
 
-class Ship(WrapSprite):
+class Ship(Entity, mixin.Wrapper):
     def __init__(self):
         super(Ship, self).__init__(x=MAX_X/2-8, y=MAX_Y/2-8)
 
@@ -150,7 +129,6 @@ class Ship(WrapSprite):
             self.thrust -= util.vectorFromAngle(self.angle) * self.maxThrust
         self.velocity += self.thrust
 
-##        self.mask = Game.Mask.from_surface(self.image)
         self.hitbox = self.rect.inflate(-10,-10)
 
         super(Ship, self).update()
@@ -158,7 +136,7 @@ class Ship(WrapSprite):
     def reset(self):
         oldpos = self.position
         newpos = (random.randint(0,MAX_X), random.randint(0,MAX_Y))
-        asts = Game.Sprite.Group([a for a in Game.world.getEntities(Asteroid) if a.visible])
+        asts = [a for a in Game.world.getEntities(Asteroid) if a.visible]
         collided = False
         for a in asts:
             if a.rect.inflate(32,32).collidepoint(newpos):
@@ -201,9 +179,7 @@ class Ship(WrapSprite):
                 self.reset()
                 self.warps -= 1
 
-                
-
-class Bullet(WrapSprite):
+class Bullet(Entity, mixin.Wrapper):
     def __init__(self):
         super(Bullet, self).__init__()
 
@@ -223,12 +199,11 @@ class Bullet(WrapSprite):
 
         super(Bullet, self).update()
 
-class TheGame(world.World):
+class TheGame(World):
     def __init__(self):
         super(TheGame, self).__init__(fps=30)
 
-        self.camera = Vector(self.width/2, self.height/2)
-##        self.statusbg.addChild(self.statusline)
+        self.followBounds(followMax=(MAX_X,MAX_Y))
         self.lives = 3
         self.reset()
 
@@ -244,14 +219,13 @@ class TheGame(world.World):
         self.ship = Ship()
 
         self.score = 0
-        self.statusbg = pyrge.entity.Image(0,0,self.width,self.height - MAX_Y, name="Status")
+        self.statusbg = Image(0,0,self.width,self.height - MAX_Y, name="Status")
         self.statusbg.position = self.width/2, MAX_Y + (self.height-MAX_Y)/2
         self.statusbg.pixels.fill((50,50,50))
-        self.statusline = pyrge.text.Text(x=0, y=-20, autowidth=True, color=(255,255,255))
+        self.statusline = text.Text(x=-80, y=-20, autowidth=True, color=(255,255,255))
         self.add(self.ship)
         self.add(self.statusbg)
         self.statusbg.addChild(self.statusline)
-##        self.add(self.statusline)
 
         self.timer = 0
 
@@ -271,18 +245,10 @@ class TheGame(world.World):
         asts.empty()
         bullets.empty()
 
-##        if not self.ship.alive:
-##            if self.lives > 0:
-##                self.lives -= 1
-##                self.ship.reset()
-##            else:
-##                self.statusline.text = "Score: %d\tGame Over!" % self.score
-
         if self.ship.alive:
             self.statusline.text = "Score: %d\tLives: %d" % (self.score,self.ship.lives)
         else:
             self.statusline.text = "Score: %d\tGame Over!" % self.score
-##            self.paused = True
 
         super(TheGame, self).update()
 

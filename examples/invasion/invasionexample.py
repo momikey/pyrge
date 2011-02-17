@@ -1,11 +1,8 @@
-import pyrge
-from pyrge import world, entity, util, text
 import random
-from pyrge.point import Vector
-from pyrge.world import Game
+from pyrge import *
 from pyrge.quadtree import QuadTree
 
-class Ship(entity.Entity):
+class Ship(Entity):
     def __init__(self):
         super(Ship, self).__init__(x=Game.width/2, y=Game.height-30)
         self.load("ship.png")
@@ -41,16 +38,14 @@ class Ship(entity.Entity):
             
         Game.world.removeHandler(Game.events.KEYDOWN, self.onSpace)
         self.alive = self.visible = False
-##        super(Ship, self).kill()
 
     def reset(self):
         self.position = Game.width/2, Game.height-30
         Game.world.addHandler(Game.events.KEYDOWN, self.onSpace)
         self.alive = True
-        self.visible = True
-        
+        self.visible = True        
 
-class Bullet(entity.Entity):
+class Bullet(Entity):
     def __init__(self, pos):
         super(Bullet, self).__init__(x=pos.x, y=pos.y, w=2, h=8)
         self.pixels.fill((255,255,255))
@@ -75,7 +70,7 @@ class Bullet(entity.Entity):
         self.alive = False
         self.visible = False
 
-class Alien(entity.Entity):
+class Alien(Entity):
     def __init__(self, x, y, color):
         super(Alien, self).__init__(x=x, y=y)
 
@@ -86,9 +81,9 @@ class Alien(entity.Entity):
         self.color = color
         self.shotclock = random.randint(4,15)*1000
 
-        frames = [0,0,0,1,1,1,0,0,0,2,2,2]
-        self.addAnimation('default', frames)
-        self.play('default', startFrame=random.randint(0,len(frames)-1))
+##        frames = [0,0,0,1,1,1,0,0,0,2,2,2]
+        self.addAnimation('default', [0,1,0,2], 3)
+        self.play('default', startFrame=random.choice(self._animations['default']))
         self.velocity.x = 10
 
         for f in self._frames:
@@ -116,7 +111,7 @@ class Alien(entity.Entity):
 
         super(Alien, self).update()
 
-class Shield(entity.Image):
+class Shield(Image):
     def __init__(self, x,y):
         super(Shield, self).__init__(x,y,4,4)
         self.fixed = True
@@ -146,7 +141,7 @@ class FPS(text.Text):
         self.rect.bottomright = (Game.world.width, Game.world.height)
         self._x, self._y = self.rect.center
 
-class TheGame(world.World):
+class TheGame(World):
     def __init__(self):
         super(TheGame, self).__init__(fps=30)
 
@@ -156,7 +151,7 @@ class TheGame(world.World):
         self.aliens = []
         colors = ['blue', 'cyan', 'green', 'yellow', 'red']
         for i in xrange(50):
-            a = Alien(16 + (i%10)*64, 48 + (i/10)*64, Game.color(colors[i/10]))
+            a = Alien(32 + (i%10)*64, 48 + (i/10)*64, Game.color(colors[i/10]))
             self.aliens.append(a)
         self.add(self.aliens)
 
@@ -179,7 +174,6 @@ class TheGame(world.World):
 
         self.lives = text.Text(x=50, y=Game.world.height-20, autowidth=True)
         self.lives.text = "Lives: %d" % self.player.lives
-##        self.lives.position = (0,Game.world.height)
         self.add(self.lives)
 
         self.killTimer = 2000
@@ -199,17 +193,12 @@ class TheGame(world.World):
                 for h in hit:
                     if h.alive:
                         h.collide(b)
-##                [s.collide(b) for s in hit if s.alive]
-
-##        Game.Sprite.groupcollide(self.shields, \
-##            Game.Sprite.Group(vsshields), False, False, shieldcollision)
 
         Game.Sprite.groupcollide(Game.Sprite.Group(self.playerbullets), \
             self.aliens, False, False, collided)
         Game.Sprite.spritecollide(self.player, Game.Sprite.Group(self.alienbullets), \
             False, collided)
 
-##        self.lives._x, self.lives._y = self.lives.rect.center
         if not self.player.alive:
             self.killTimer -= Game.elapsed
             if self.killTimer <= 0:
@@ -217,13 +206,6 @@ class TheGame(world.World):
                 self.player.reset()
 
         super(TheGame, self).update()
-
-    def _overlapped(self, first, second):
-        if first.overlap(second):
-            first.kill()
-            if not isinstance(second, Alien):
-                second.kill()
-            return True
 
     def getAvailableBullet(self, who):
         if who == self.player:
