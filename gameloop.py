@@ -148,18 +148,48 @@ class Globals(object):
 Game = Globals()
 
 class GameLoop(object):
-    """An event-aware wrapper around the basic pygame loop"""
+    """An event-aware wrapper around the basic pygame loop.
+
+       The GameLoop is the heart of any Pyrge game. It controls and updates
+       all the various entities (sprites, text, UI elements, etc.) and does
+       everything necessary to link the entities to the underlying Pygame
+       system.
+
+       @cvar screen: The main game window, as a Pygame L{Surface}. (If the
+           game graphics are scaled, then this is the "pre-scaled" screen.)
+       @cvar clock: The game clock, which can also be used to get the
+           game's actual framerate.
+       @cvar width: The width of the game window or the screen.
+       @cvar height: The height of the game window or the screen.
+       @cvar scale: The scale factor of the game's graphics.
+       @cvar fps: The target (not actual) framerate of the game.
+       @cvar paused: While this property is set to True, all game updates
+           are stopped.
+       @cvar frameTime: The time taken in the last frame, in milliseconds.
+           (This is an absolute measure of time, unaffected by the C{timeScale}
+           property.)
+       @cvar timeScale: A factor that will be multiplief by the C{frameTime}
+           value to obtain "game time". The default is 1, meaning that game
+           time will pass at the same speed as normal "wall time". Lower numbers
+           cause a slowdown or slow-motion effect (e.g., 0.5 is half speed),
+           while numbers greater than 1 will cause a speed-up effect (e.g.,
+           2 is double speed).
+    """
 
     def __init__(self, width=640, height=480, fps=30, scale=1, initmixer=True):
-        """Create a basic game structure. The parameters are:
-            width: the width of the game window (default 640)
-            height: the height of the game window (default 480)
-            fps: the framerate of the game in frames per second (default 30)
-            initmixer: whether to set up the mixer module for high-quality samples (default True)"""
+        """Create a basic game structure.
+
+            @param width: The width of the game window (default 640).
+            @param height: The height of the game window (default 480).
+            @param fps: The framerate of the game in frames per second
+                (default 30).
+            @param initmixer: Whether to set up the mixer module for
+                high-quality sounds (default True).
+        """
 
         # pre-initialize the mixer module to use 44.1kHz sampling
         # the defaults are:
-        # frequency = 22050 (22,050 kHz)
+        # frequency = 22050 (22.050 kHz)
         # size = -16 (16-bit signed integers)
         # channels = 2 (stereo sound)
         # buffer = 4096
@@ -190,6 +220,9 @@ class GameLoop(object):
 
         # this is the time elapsed in the current frame
         self.frameTime = 0.0
+
+        # this is the scale factor from "real time" to "game time"
+        self.timeScale = 1
 
         # copy constructor arguments into properties
         self.width = width
@@ -367,7 +400,8 @@ class GameLoop(object):
                 pygame.display.update(self._rectList)
 
                 # set game-global values
-                Game.elapsed = self.frameTime = self.clock.tick(self.fps)
+                self.frameTime = self.clock.tick(self.fps)
+                Game.elapsed = self.frameTime * self.timeScale
                 Game.keys = pygame.key.get_pressed()
                 Game.keymods = pygame.key.get_mods()
         finally:

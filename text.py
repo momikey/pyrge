@@ -30,7 +30,6 @@ class Text(entity.Image):
 
        @param text: The text that this object will render.
 
-       @keyword text: The text that this object will render.
        @keyword font: A pygame Font object that contains all of the rendering
            information, such as font face, size, and bold/italics. If this is
            None, then Pyrge's default font will be used.

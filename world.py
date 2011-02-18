@@ -163,7 +163,7 @@ class World(gameloop.GameLoop):
         """Add a new stage to this world.
 
            @param stage: The L{Stage} to add.
-           @param stagid: The index number of this Stage.
+           @param stageid: The index number of this Stage.
            @return: The index number of the Stage.
         """
         if stageid is None:

@@ -113,9 +113,10 @@ class Music(object):
     def position(self):
         """The amount of time that this music object has been playing.
 
-           @return: Time (in milliseconds) that this object has been playing,
+           This is the time (in milliseconds) that this object has been playing,
            0.0 if the object is currently stopped, or None if the object not
            the active music track.
+
            @note: Using the C{startpos} argument of the L{play} method will
            cause this property to be given relative to the starting position
            of playback, not of the file itself.
