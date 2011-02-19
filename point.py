@@ -3,7 +3,8 @@ import math
 __doc__ = """2D points and vectors
 
 The Point class is made to be lightweight, while the Vector class supports
-the full range of typical vector operations."""
+the full range of typical vector operations. This module also includes
+functions for common 2D geometric operations."""
 
 __all__ = ['Point', 'Vector', 'length', 'distance', 'rotate']
 
@@ -14,10 +15,9 @@ class Point(object):
        by two coordinates, another Point object, or any sequence.
     """
     def __init__(self, x=0.0, y=0.0):
-        # This way is about 3x faster than the exception version below,
-        # according to timeit(). It's not as flexible, though.
-        if isinstance(x, (tuple,list)):
-            # Try converting a tuple
+##        if isinstance(x, (tuple,list)):
+        if hasattr(x, '__getitem__'):
+            # Try converting a sequence
             if len(x) == 2:
                 self.x, self.y = x
             elif len(x) == 1:
@@ -33,27 +33,6 @@ class Point(object):
             # Use numbers directly
             self.x = x
             self.y = y
-
-##        try:
-##            self.x = x.x
-##            self.y = x.y
-##        except AttributeError:
-##            try:
-##                self.x = x[0]
-##                self.y = x[1]
-##            except TypeError:
-##                self.x = x
-##                self.y = y
-##            except IndexError:
-##                try:
-##                    self.x = self.y = x[0]
-##                except IndexError:
-##                    raise ValueError, "Invalid sequence argument"
-##            except:
-##                raise ValueError, "Invalid argument"
-
-##        self.x = float(self.x)
-##        self.y = float(self.y)
 
     def __str__(self):
         return str((self.x, self.y))
@@ -80,6 +59,9 @@ class Point(object):
     def __ne__(self, other):
         return not self == other
 
+# An origin point, so we don't have to create an extra one all the time.
+ZeroPoint = Point()
+
 class Vector(Point):
     """A full-featured 2D vector.
 
@@ -89,6 +71,8 @@ class Vector(Point):
     """
     def __init__(self, x=0.0, y=0.0):
         super(Vector, self).__init__(x, y)
+        self.x = float(self.x)
+        self.y = float(self.y)
 
     def length(self):
         """Vector length.
@@ -138,6 +122,31 @@ class Vector(Point):
         v.x = self.x * math.cos(r) - self.y * math.sin(r)
         v.y = self.x * math.sin(r) + self.y * math.cos(r)
         return v
+
+##    def closestPoint(self, pt, start=ZeroPoint):
+##        """Finds the closest point along this vector to the given point.
+##
+##           The vector is treated as a line segment with a starting point
+##           equal to the C{start} parameter.
+##
+##           @param pt: The Point that will be tested.
+##           @param start: The starting Point of this Vector.
+##           @return: The nearest point to the given point that is along
+##               this Vector.
+##        """
+##        w = Vector(pt.x-start.x,pt.y-start.y)
+##        proj = w.dot(self)
+##        if proj <= 0:
+##            return start
+##        else:
+##            vsq = self.dot(self)
+##            if proj >= vsq:
+##                return self + start
+##            else:
+##                return start + (proj/vsq)*self
+##
+##    def distanceToPoint(self, pt, start=ZeroPoint):
+##        return distance(pt, self.closestPoint(pt,Vector(start)))
 
     def __add__(self, other):
         try:
@@ -251,63 +260,3 @@ def rotate(v, theta):
         by C{theta} degrees.
     """
     return Vector(v).rotate(theta)
-
-# Testing starts here
-# TODO: make this into unit tests
-if __name__ == '__main__':
-    p1 = Point()
-    p2 = Point(1)
-    p3 = Point(2.0)
-    p4 = Point(-1.5, 3.5)
-    p5 = p4
-    p6 = tuple(p3)
-    p7 = Point((1,2))
-    p8 = Point(p6)
-
-    assert p1.x == 0 and p1.y == 0, "Zero-arg constructor: Point() != (0,0)"
-    assert p2.x == 1 and p2.y == 0, "One-arg constructor: Point(1) != (1,0)"
-    assert p3.x == 2 and p3.y == 0, "Floating-point argument: Point(2.0) != (2,0)"
-    assert p4.x == -1.5 and p4.y == 3.5, "Two-arg constructor: Point(-1.5, 3.5) != (-1.5, 3.5)"
-    assert p5.x == -1.5 and p5.y == 3.5 and p4 == p5, \
-        "Equality test: Point(-1.5, 3.5) != Point(-1.5, 3.5)"
-    assert p6 == (2,0), "Conversion to tuple: Point(2,0) != (2,0)"
-    assert p7.x == 1 and p7.y == 2, "Initialization from tuple: Point((1,2)) != (1,2)"
-    assert p8.x == p3.x and p8.y == p3.y, \
-        "Initialization from tuple: Point((2,0)) != (2,0)"
-
-    v1 = Vector(2,3)
-    v2 = Vector(-1,-1.5)
-    v3 = (1,2)
-    v4 = Vector((0,))
-
-    assert v1.x == 2 and v1.y == 3, "Simple constructor failed"
-    assert v2.x == -1 and v2.y == -1.5, "Floating-point constructor failed"
-    assert v4.x == 0 and v4.y == 0, "Tuple constructor failed"
-
-    assert v1 + v2 == Vector(1,1.5), "Addition operation failed"
-    assert v2 + v3 == Vector(0,0.5), "Addition of tuple failed"
-    assert v1 - v2 == Vector(3,4.5), "Subtraction operation failed"
-    assert v2 - v3 == Vector(-2,-3.5), "Subtraction of tuple failed"
-
-    v4 += v3
-    assert v4 == (1,2), "In-place addition failed"
-    assert (10,10) + v4 == (11,12), "Reverse addition failed"
-
-    assert v1 * 5 == (10,15), "Multiplication operation failed"
-    assert v2 * -3.3 == (-1 * -3.3, -1.5 * -3.3), "Float multiplication failed"
-    assert v3 * v4 == (1,4), "Vector scaling failed"
-
-    assert v1.length() == math.sqrt(2**2+3**2), "Length method failed"
-    assert v1.dot(v2) == v1.x*v2.x + v1.y*v2.y == -6.5, "Dot product failed"
-    assert v1.perpendicular() == (-3,2), "Perpendicular method failed"
-
-    assert length(v1) == v1.length(), "Global length function failed"
-    assert distance(v1, Vector(1,1)) == math.sqrt(5), "Global distance function failed"
-    assert Vector(1,1).angle() == 45, "Angle method failed"
-    assert abs(Vector(1,1).rotate(-45).length() - Vector(1,1).length()) < 1e-10, \
-        "Rotate method failed"
-    assert abs(Vector(1,0).rotate(45).normalized().length() - 1) < 1e-10, \
-        "Normalized method failed"
-
-    assert bool(Vector(1,0)) and bool(Vector(3.1,4.5)) \
-        and not bool(Vector(0.0, -0.0)), "Nonzero method failed"
