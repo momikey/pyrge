@@ -54,6 +54,8 @@ class Image(Game.Sprite.DirtySprite):
            frame in that animation's list.
        @ivar scroll: A L{Point} representing the "scroll factor" of this object.
        @ivar name: A string identifying this image, if needed.
+       @ivar filename: The name of an image file to load. (This is equivalent
+           to calling the C{load} method after creating this Image.)
 
        @keyword x: The x position of the object, in pixels.
        @keyword y: The y position of the object, in pixels.
@@ -130,6 +132,10 @@ class Image(Game.Sprite.DirtySprite):
 
         # name of this object
         self.name = kwargs.get('name', '')
+
+        # load an image
+        if 'filename' in kwargs:
+            self.load(kwargs['filename'])
 
     ###
     # Image property, holding the surface currently active for this sprite
