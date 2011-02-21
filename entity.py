@@ -416,6 +416,8 @@ class Image(Game.Sprite.DirtySprite):
     def stop(self):
         """Stops animation of this object. This does not remove any animations."""
         self.animated = False
+        self.currentAnimation = None
+        self.redraw()
         return self
 
     def showFrame(self, frameid):
