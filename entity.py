@@ -182,6 +182,7 @@ class Image(Game.Sprite.DirtySprite):
     def redraw(self):
         """Force a redraw of this sprite next frame."""
         self.dirty = 1
+        self._recenter()
 
     ###
     # Child methods
@@ -650,23 +651,24 @@ class Image(Game.Sprite.DirtySprite):
             # based on velocity/position data
             selfvx,selfvy = self.velocity if hasattr(self, 'velocity') else 0,0
             othervx,othervy = other.velocity if hasattr(other, 'velocity') else 0,0
+            orect = other.rect if not isinstance(other,Game.Rect) else other
 
-            if selfvx > othervx or (self.x < other.x and self.rect.right > other.rect.left):
+            if selfvx > othervx or (self.x < other.x and self.rect.right > orect.left):
                 # this object is approaching from the left
                 # so its right edge will be colliding
                 _r = True
                 
-            if selfvx < othervx or (self.x > other.x and self.rect.left < other.rect.right):
+            if selfvx < othervx or (self.x > other.x and self.rect.left < orect.right):
                 # this object is approaching from the right
                 # so its left edge will be colliding
                 _l = True
 
-            if selfvy > othervy or (self.y < other.y and self.rect.bottom > other.rect.top):
+            if selfvy > othervy or (self.y < other.y and self.rect.bottom > orect.top):
                 # this object is approaching from the top
                 # so its bottom will be colliding
                 _b = True
 
-            if selfvy < othervy or (self.y > other.y and self.rect.top < other.rect.bottom):
+            if selfvy < othervy or (self.y > other.y and self.rect.top < orect.bottom):
                 # this object is approaching from the bottom
                 # so its top will be colliding
                 _t = True
