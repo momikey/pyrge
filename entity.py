@@ -158,6 +158,9 @@ class Image(Game.Sprite.DirtySprite):
     def kill(self):
         """Kills this object by setting its alive property to False
         and removing it from the display."""
+        for c in self.children:
+            c.kill()
+
         self.alive = False
         self.visible = False
         # pygame Sprites have a kill method that removes them from groups

@@ -95,6 +95,13 @@ class Clickable(SpriteMixin):
         """
         pass
 
+    def kill(self):
+        """Kills the sprite, removing it from the display and setting its
+           C{alive} property to False."""
+        # Clean up after ourselves
+        Game.world.removeHandler(Game.events.MOUSEBUTTONDOWN, self.__isClicked)
+        super(Clickable, self).kill()
+
 class Fader(SpriteMixin):
     """A mixin that makes a sprite fade in brightness over a set period of time.
 
