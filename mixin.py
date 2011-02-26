@@ -11,7 +11,7 @@ multiple inheritance to add these effects to a sprite.
 When using mixins, they should be listed first in an object's superclasses.
 """
 
-__all__ = ['SpriteMixin', 'Bouncer', 'Wrapper', 'Clickable', 'Fader']
+__all__ = ['SpriteMixin', 'Bouncer', 'Wrapper', 'Clickable', 'Fader', 'YOrdered']
 
 class SpriteMixin(Game.Sprite.DirtySprite):
     """The base class for all mixins. You shouldn't make instances of this class;
@@ -132,3 +132,22 @@ class Fader(SpriteMixin):
             self.pixels.set_alpha(alpha)
             super(Fader, self).update()
 
+class YOrdered(SpriteMixin):
+    """A mixin that changes a sprite's render layer based on its vertical
+       screen position.
+
+       A Y-ordered sprite changes its layer (i.e., drawing order) when it
+       changes its Y-coordinate. This can be used to create a perspective
+       effect like that seen in old RPGs.
+    """
+    def update(self):
+        for g in self.groups():
+            if isinstance(g, Game.Sprite.LayeredDirty) and \
+               abs(g.get_layer_of_sprite(self) - self.y) > 1:
+                # Only the "LayeredDirty" type groups, like Stages and
+                # the World's display list, need to be affected. Also,
+                # we only change the sprite's layer if it's actually
+                # different enough to be noticed.
+                g.change_layer(self, self.y)
+                
+        super(YOrdered, self).update()
