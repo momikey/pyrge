@@ -83,8 +83,9 @@ class Clickable(SpriteMixin):
         @todo: This should take into account layers, and whether there is
                another object on top of this one.
         """
-        if (hasattr(self, "hitbox") and self.hitbox.collidepoint(event.pos)) or \
-           self.rect.collidepoint(event.pos) and self.alive:
+        pos = (event.pos[0] / Game.world.scale, event.pos[1] / Game.world.scale)
+        if (hasattr(self, "hitbox") and self.hitbox.collidepoint(pos)) or \
+           self.rect.collidepoint(pos) and self.alive:
             self.click(event)
 
     def click(self, event):
