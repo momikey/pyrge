@@ -253,6 +253,14 @@ class GameLoop(object):
         # The current key modifiers (SHIFT, CTRL, etc.), updated each frame
         Game.keymods = pygame.key.get_mods()
 
+        # The current position of the mouse, updated each frame
+        Game.mousepos = (0,0)
+
+        # The current state of the mouse buttons, updated each frame
+        # Note: This only covers the three main mouse buttons, not the
+        # scroll wheel or other buttons.
+        Game.mousebuttons = (0,0,0)
+
         # The default Pyrge font (you can change this in your own classes)
         Game.defaultFont = pygame.font.SysFont('arial', 16)
 
@@ -353,6 +361,14 @@ class GameLoop(object):
         self.background = pygame.Surface((self.width, self.height))
         return self
 
+    def showCursor(self):
+        """Shows the system mouse cursor."""
+        return pygame.mouse.set_visible(1)
+
+    def hideCursor(self):
+        """Hides the system mouse cursor."""
+        return pygame.mouse.set_visible(0)
+
     def __get_bgcolor(self):
         return self.background.get_at((0,0))
     
@@ -404,5 +420,7 @@ class GameLoop(object):
                 Game.elapsed = self.frameTime * self.timeScale
                 Game.keys = pygame.key.get_pressed()
                 Game.keymods = pygame.key.get_mods()
+                Game.mousepos = pygame.mouse.get_pos()
+                Game.mousebuttons = pygame.mouse.get_pressed()
         finally:
             pygame.quit()
