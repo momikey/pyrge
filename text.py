@@ -118,8 +118,7 @@ class Text(entity.Image):
             # if the text is black
             self.pixels.set_colorkey((0,0,0), Game.Constants.RLEACCEL)
 
-        self._recenter()
-        self.dirty = 1
+        self.redraw()
 
     def _wrap(self, text):
         """This is a helper method to calculate where a line should break when wrapping."""

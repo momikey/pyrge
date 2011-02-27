@@ -190,7 +190,9 @@ class Image(Game.Sprite.DirtySprite):
 
     def redraw(self):
         """Force a redraw of this sprite next frame."""
-        self.dirty = 1
+        # if a sprite has a "dirty" value of 2, leave it,
+        # because that means that it should be redrawn every frame
+        self.dirty = 1 if self.dirty == 0 else self.dirty
         self._recenter()
 
     ###
@@ -245,8 +247,7 @@ class Image(Game.Sprite.DirtySprite):
         self.pixels = Game.Image.load(fname)
         self.rect.size = self.image.get_size()
         self._w, self._h = self.rect.size
-        self._recenter()
-        self.dirty = 1          # force a redraw
+        self.redraw()
         return self
 
     # load an image and rotate it
@@ -262,8 +263,7 @@ class Image(Game.Sprite.DirtySprite):
         self.angle = angle
         self.rect.size = self.image.get_size()
         self._w, self._h = self.rect.size
-        self._recenter()
-        self.dirty = 1          # force a redraw
+        self.redraw()
         return self
 
     # load an animation frame
@@ -346,8 +346,7 @@ class Image(Game.Sprite.DirtySprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self._x, self._y)
         self._w, self._h = self.rect.size
-        self._recenter()
-        self.dirty = 1          # force a redraw
+        self.redraw()
         return self
 
     ###
@@ -435,8 +434,7 @@ class Image(Game.Sprite.DirtySprite):
         self.pixels = self._frames[frameid]
         self.currentFrame = frameid
         self._w, self._h = self.rect.size = self.image.get_size()
-        self._recenter()
-        self.dirty = 1
+        self.redraw()
 
         return self
 
@@ -512,7 +510,6 @@ class Image(Game.Sprite.DirtySprite):
         """
         self.angle = 0.0
         self.pixels = Game.Transform.rotate(self.pixels, deg)
-        self.dirty = 1
         self.rect.size = self.image.get_size()
         self.rect.center = (self._x, self._y)
         self._w, self._h = self.rect.size
@@ -521,6 +518,8 @@ class Image(Game.Sprite.DirtySprite):
             for idx,f in enumerate(self._frames):
                 f = Game.Transform.rotate(f, deg)
                 self._frames[idx] = f
+
+        self.redraw()
         return self
 
     # scale the sprite
@@ -546,8 +545,6 @@ class Image(Game.Sprite.DirtySprite):
             # we got a point or tuple or something
             # TODO: make this so a single number means a uniform scale
             xscl, yscl = xscl[0:2]
-
-        self.dirty = 1
 
         # use smoothscale if we're asked, or scale2x if we can
         if smooth and self.pixels.get_bitsize() >= 24:
@@ -575,6 +572,7 @@ class Image(Game.Sprite.DirtySprite):
                 f = scalefunc(f, (int(w*xscl), int(h*yscl)))
                 self._frames[idx] = f
 
+        self.redraw()
         return self
 
     ###
@@ -799,8 +797,7 @@ class Image(Game.Sprite.DirtySprite):
     def _set_pos(self, val):
         self._x = val[0]
         self._y = val[1]
-        self._recenter()
-        self.dirty = 1
+        self.redraw()
 
     position = property(_get_pos, _set_pos, doc="The X-Y position of this object.")
 
@@ -810,8 +807,7 @@ class Image(Game.Sprite.DirtySprite):
 
     def __set_x(self, val):
         self._x = val
-        self._recenter()
-        self.dirty = 1
+        self.redraw()
         return self
 
     def __get_y(self):
@@ -819,8 +815,7 @@ class Image(Game.Sprite.DirtySprite):
 
     def __set_y(self, val):
         self._y = val
-        self._recenter()
-        self.dirty = 1
+        self.redraw()
         return self
 
     @property
@@ -847,7 +842,7 @@ class Image(Game.Sprite.DirtySprite):
     def __set_width(self, val):
         self._w = val
         self.rect.width = val
-        self.dirty = 1
+        self.redraw()
         return self
 
     def __get_height(self):
@@ -856,7 +851,7 @@ class Image(Game.Sprite.DirtySprite):
     def __set_height(self, val):
         self._h = val
         self.rect.height = val
-        self.dirty = 1
+        self.redraw()
         return self
 
     def __get_size(self):
@@ -864,7 +859,7 @@ class Image(Game.Sprite.DirtySprite):
 
     def __set_size(self, val):
         self.width, self.height = val
-        self.dirty = 1
+        self.redraw()
         return self
 
     x = property(__get_x, __set_x, doc="The X coordinate of this object.")
@@ -1078,7 +1073,7 @@ class Entity(Image):
             self._velocity = point.Vector(_vx, _vy)
         else:
             self._velocity = point.Vector(val)
-        self.dirty = 1
+        self.redraw()
 
     velocity = property(_get_velocity, _set_velocity,
                              doc='The velocity L{Vector} of this object.')
@@ -1088,7 +1083,7 @@ class Entity(Image):
 
     def _set_accel(self, val):
         self._accel = point.Vector(val)
-        self.dirty = 1
+        self.redraw()
 
     acceleration = property(_get_accel, _set_accel,
                              doc='The acceleration L{Vector} of this object.')
@@ -1109,7 +1104,7 @@ class Entity(Image):
             self._angular = self.maxAngularVelocity * util.sign(val)
         else:
             self._angular = val
-        self.dirty = 1
+        self.redraw()
 
     angularVelocity = property(_get_angularvelocity, _set_angularvelocity,
                              doc='The angular velocity of this object')

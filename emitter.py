@@ -147,4 +147,4 @@ class BoxParticle(pyrge.entity.Entity):
         super (BoxParticle, self).__init__(*args, **kwargs)
 
         self.pixels.fill(kwargs.get('color', pyrge.Game.randomcolor()))
-        self.dirty = 1
+        self.redraw()

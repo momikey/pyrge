@@ -121,7 +121,7 @@ class ToggleButton(Button):
         self.toggled = not self.toggled
         self.pixels.fill(self._on if self.toggled else self._off)
         self._drawBorder()
-        self.dirty = 1
+        self.redraw()
 
 class Console(Image):
     """A simple on-screen console window."""
