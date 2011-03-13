@@ -47,7 +47,7 @@ def flatten(seq):
     for item in seq:
         try:
             # sublists
-            for subitem in item:
+            for subitem in flatten(item):
                 yield subitem
         except TypeError:
             # regular element
