@@ -42,6 +42,9 @@ class Text(entity.Image):
        @keyword autowidth: If this argument is True (default is False), then
            the Text object will be resized so that the text will fit on a
            single line.
+       @keyword static: If this argument is True (the default), the Text's
+           position value is treated as its upper-left corner. Otherwise, the
+           position is the center of the Text.
     """
     def __init__(self, text='', *args, **kwargs):
         # do these first, so we can use them for positioning
@@ -73,8 +76,9 @@ class Text(entity.Image):
         super(Text, self).__init__(*args, **kwargs)
 
         # change position semantics from center to top-left
-        self.x += self.width/2
-        self.y += self.height/2
+        if kwargs.get('static', True):
+            self.x += self.width/2
+            self.y += self.height/2
 
         if len(self._text):
             self._render_text()
