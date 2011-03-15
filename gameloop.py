@@ -168,7 +168,7 @@ class GameLoop(object):
        @cvar frameTime: The time taken in the last frame, in milliseconds.
            (This is an absolute measure of time, unaffected by the C{timeScale}
            property.)
-       @cvar timeScale: A factor that will be multiplief by the C{frameTime}
+       @cvar timeScale: A factor that will be multiplied by the C{frameTime}
            value to obtain "game time". The default is 1, meaning that game
            time will pass at the same speed as normal "wall time". Lower numbers
            cause a slowdown or slow-motion effect (e.g., 0.5 is half speed),
@@ -183,6 +183,7 @@ class GameLoop(object):
             @param height: The height of the game window (default 480).
             @param fps: The framerate of the game in frames per second
                 (default 30).
+            @param scale: The scale factor of the game's graphics (default 1).
             @param initmixer: Whether to set up the mixer module for
                 high-quality sounds (default True).
         """
