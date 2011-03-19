@@ -64,6 +64,32 @@ class Wrapper(SpriteMixin):
 
         super(Wrapper, self).update()
 
+class Stopper(SpriteMixin):
+    """A mixin that makes a sprite stop moving when it reaches the edge of the
+       game world."""
+
+    def update(self):
+        bounds = Game.world.getBounds()
+        if self.left < bounds.left:
+            self.x = bounds.left + self.width/2.
+            if hasattr(self, "velocity"):
+                self.velocity.x = self.acceleration.x = 0
+        elif self.right > bounds.right:
+            self.x = bounds.right - self.width/2.
+            if hasattr(self, "velocity"):
+                self.velocity.x = self.acceleration.x = 0
+
+        if self.top < bounds.top:
+            self.y = bounds.top + self.height/2.
+            if hasattr(self, "velocity"):
+                self.velocity.y = self.acceleration.y = 0
+        elif self.bottom > bounds.bottom:
+            self.y = bounds.bottom - self.height/2.
+            if hasattr(self, "velocity"):
+                self.velocity.y = self.acceleration.y = 0
+
+        super(Stopper, self).update()
+            
 class Clickable(SpriteMixin):
     """A mixin that detects when a sprite is clicked and responds accordingly.
 
