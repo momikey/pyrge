@@ -4,7 +4,7 @@ from util import Struct
 
 __doc__ = """A scrollable game world with camera control
 
-The L{world} module defines a single class. L{World} is a subclass
+The L{world} module defines two classes: World and Stage. L{World} is a subclass
 of L{GameLoop}, which creates a simple, single-screen game. L{World} adds
 scrolling (including parallax scrolling) and camera control (i.e., an object,
 usually the player, can be designated as the "focus", so the game engine always
@@ -43,7 +43,7 @@ class World(gameloop.GameLoop):
 
         # SDL uses 16-bit coordinates for drawing, so these are the maximum bounds
         # Range of a 16-bit integer = -32,678 to +32,767 (or -2**15 to 2**15 - 1)
-        self._bounds = Game.Rect(-(1 << 15), (1 << 15)-1, (1 << 16)-1, (1 << 16)-1)
+        self._bounds = Game.Rect(-(1 << 15), -(1 << 15), (1 << 16)-1, (1 << 16)-1)
 
         # the world's stages (game states)
         self._stages = []
