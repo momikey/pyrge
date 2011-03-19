@@ -144,7 +144,9 @@ class BoxParticle(pyrge.entity.Entity):
        @keyword color: The color of the particle.
     """
     def __init__(self, *args, **kwargs):
-        super (BoxParticle, self).__init__(*args, **kwargs)
+        if not kwargs.get('size'):
+            kwargs['size'] = (1,1)
+        super(BoxParticle, self).__init__(*args, **kwargs)
 
         self.pixels.fill(kwargs.get('color', pyrge.Game.randomcolor()))
         self.redraw()

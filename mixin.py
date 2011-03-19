@@ -11,7 +11,8 @@ multiple inheritance to add these effects to a sprite.
 When using mixins, they should be listed first in an object's superclasses.
 """
 
-__all__ = ['SpriteMixin', 'Bouncer', 'Wrapper', 'Clickable', 'Fader', 'YOrdered']
+__all__ = ['SpriteMixin', 'Bouncer', 'Wrapper', 'Clickable',
+           'Fader', 'YOrdered', 'ArrowKeys']
 
 class SpriteMixin(Game.Sprite.DirtySprite):
     """The base class for all mixins. You shouldn't make instances of this class;
@@ -129,9 +130,57 @@ class Clickable(SpriteMixin):
         Game.world.removeHandler(Game.events.MOUSEBUTTONDOWN, self.__isClicked)
         super(Clickable, self).kill()
 
+class ArrowKeys(SpriteMixin):
+    """A mixin that does user-defined actions when arrow keys are held down.
+
+       @note: ArrowKeys should come before Image (or any of its subclasses) in
+           a sprite's base class list.
+
+       @keyword keys: A sequence containing the keycodes to use for up, left,
+           down, and right, in order, or a string of 4 letters, such as "WASD".
+    """
+    def __init__(self, *args, **kwargs):
+        self.__arrowkeys = kwargs.get('keys',
+                                      (Game.Constants.K_UP, Game.Constants.K_LEFT,
+                                       Game.Constants.K_DOWN, Game.Constants.K_RIGHT))
+
+        if isinstance(self.__arrowkeys, basestring):
+            self.__arrowkeys = [getattr(Game.Constants, "K_" + l)
+                                for l in self.__arrowkeys]
+
+        super(ArrowKeys, self).__init__(*args, **kwargs)
+        
+    def update(self):
+        if Game.keys[self.__arrowkeys[0]]:
+            self.upArrow()
+        elif Game.keys[self.__arrowkeys[2]]:
+            self.downArrow()
+
+        if Game.keys[self.__arrowkeys[1]]:
+            self.leftArrow()
+        elif Game.keys[self.__arrowkeys[3]]:
+            self.rightArrow()
+
+        super(ArrowKeys, self).update()
+
+    def upArrow(self):
+        pass
+
+    def downArrow(self):
+        pass
+
+    def leftArrow(self):
+        pass
+
+    def rightArrow(self):
+        pass
+
 class Fader(SpriteMixin):
     """A mixin that makes a sprite fade in brightness over a set period of time.
 
+       @note: Fader should come before Image (or any of its subclasses) in
+           a sprite's base class list.
+       
        @todo: Add a Fader mixin that can be used with particle emitters, because
            the duration property in this class clashes with the one that
            Emitter adds to its children.

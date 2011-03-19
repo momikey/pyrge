@@ -45,8 +45,7 @@ class Effect(object):
         for e in Game.world.getEntities():
             if e.scroll:
                 # force a recenter and redraw
-                e._recenter()
-                e.dirty = 1
+                e.redraw()
 
     def update(self):
         """Update the effect for the next frame. This is essentially the same
@@ -64,8 +63,7 @@ class Effect(object):
             for e in Game.world.getEntities():
                 if e.scroll:
                     # force a recenter and redraw
-                    e._recenter()
-                    e.dirty = 1
+                    e.redraw()
 
     def effect(self):
         """The code for the actual effect. Subclasses must override this method
