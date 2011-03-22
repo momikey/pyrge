@@ -53,9 +53,9 @@ class Tween(object):
 
         # an optional function to call when this tween is complete
         if complete is not None:
-            self.doOnComplete = complete
+            self.complete = complete
         else:
-            self.doOnComplete = None
+            self.complete = None
 
         # the current value of the tween
         self.value = self.startval
@@ -105,8 +105,8 @@ class Tween(object):
 
     def onComplete(self):
         """Override this method to handle tasks after the tween is complete."""
-        if self.doOnComplete is not None:
-            self.doOnComplete(self.value)
+        if self.complete is not None:
+            self.complete(self.value)
 
     def __str__(self):
         if isinstance(self.startval, float) and isinstance(self.endval, float):
