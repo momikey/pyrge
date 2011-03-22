@@ -39,6 +39,8 @@ def QuadraticEaseOut(start, end, percent):
     v = 2*percent - percent**2
     return Linear(start, end, v)
 
+Quadratic = QuadraticEaseIn
+
 def Sine(start, end, percent):
     """An interpolation following a sine curve."""
     v = math.sin(percent*math.pi/2)
@@ -48,6 +50,18 @@ def Cosine(start, end, percent):
     """An interpolation following a cosine curve."""
     v = math.cos(percent*math.pi/2)
     return Linear(start, end, v)
+
+def CubicEaseIn(start, end, percent):
+    """A cubic interpolation accelerating from 0."""
+    return Linear(start, end, percent**3)
+
+Cubic = CubicEaseIn
+
+def QuarticEaseIn(start, end, percent):
+    """A quartic (fourth-order) interpolation accelerating from 0."""
+    return Linear(start, end, percent**4)
+
+Quartic = QuarticEaseIn
 
 # Adapters for non-tweenable types
 class TweenFunction(object):

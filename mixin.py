@@ -164,15 +164,19 @@ class ArrowKeys(SpriteMixin):
         super(ArrowKeys, self).update()
 
     def upArrow(self):
+        """Override this to control behavior when the "up" key is held"""
         pass
 
     def downArrow(self):
+        """Override this to control behavior when the "down" key is held"""
         pass
 
     def leftArrow(self):
+        """Override this to control behavior when the "left" key is held"""
         pass
 
     def rightArrow(self):
+        """Override this to control behavior when the "right" key is held"""
         pass
 
 class Fader(SpriteMixin):
