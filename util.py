@@ -44,11 +44,14 @@ def flatten(seq):
        
        @return: A flattened list as a generator.
     """
-    for item in seq:
-        try:
-            # sublists
-            for subitem in flatten(item):
-                yield subitem
-        except TypeError:
-            # regular element
-            yield item
+    if isinstance(seq, basestring):
+        yield seq
+    else:
+        for item in seq:
+            try:
+                # sublists
+                for subitem in flatten(item):
+                    yield subitem
+            except TypeError:
+                # regular element
+                yield item

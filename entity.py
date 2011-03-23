@@ -129,6 +129,7 @@ class Image(Game.Sprite.DirtySprite):
         # Parent/child relationships
         self._children = []
         self._parent = None
+        self._unaddedChildren = []
 
         # name of this object
         self.name = kwargs.get('name', '')
@@ -184,6 +185,11 @@ class Image(Game.Sprite.DirtySprite):
 
             self._recenter()
 
+        if self.alive and self.groups() and self._unaddedChildren:
+            for c in self._unaddedChildren:
+                self.addChild(c)
+                self._unaddedChildren.remove(c)
+
         # pygame Sprites' update() methods don't do anything by default,
         # but we have this here to allow for mixins
         super(Image, self).update()
@@ -203,10 +209,13 @@ class Image(Game.Sprite.DirtySprite):
 
            @param child: The object that is to be attached to this one.
         """
-        self._children.append(child)
-        child._parent = self
-        child.add(*self.groups())
-        child._recenter()
+        if not self.groups() and child not in self._unaddedChildren:
+            self._unaddedChildren.append(child)
+        else:
+            self._children.append(child)
+            child._parent = self
+            child.add(*self.groups())
+            child._recenter()
 
     def removeChild(self, child):
         """Removes a child from this sprite.
