@@ -278,7 +278,8 @@ class GameLoop(object):
         self.background = pygame.Surface((self.width, self.height))
 
         # This is the "display list": all the drawable objects
-        self._entities = pygame.sprite.LayeredDirty()
+        self._entities = pygame.sprite.LayeredDirty(_use_update=True,
+                                                    _time_threshold=1000./self.fps)
         self.addUpdater(self.update)
 
         # the game can set this to pause the game logic,

@@ -72,7 +72,8 @@ class TileMap(Image):
                 tile = Image(x=colid*self.sheet.spritewidth+self.x+borderx, \
                              y=rowid*self.sheet.spriteheight+self.y+bordery, \
                              w=self.sheet.spritewidth, \
-                             h=self.sheet.spriteheight)
+                             h=self.sheet.spriteheight,
+                             name='tile '+str(col))
                 tile.fixed = True
                 if col != -1:
                     # -1 is a blank tile, we just leave it empty
