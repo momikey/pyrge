@@ -65,6 +65,8 @@ class Image(Game.Sprite.DirtySprite):
        @keyword h: A synonym for C{height}.
        @keyword name: An identifying name for this object.
        """
+    # direction constants for facing and overlapping
+    LEFT, RIGHT, TOP, BOTTOM = range(4)
 ##    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
     def __init__(self, *args, **kwargs):
         super(Image, self).__init__()
@@ -138,6 +140,15 @@ class Image(Game.Sprite.DirtySprite):
         if 'filename' in kwargs:
             self.load(kwargs['filename'])
 
+        # for collision detection/response
+        # "touching" is updated whenever a collision detection method is called
+        # "wasTouching" is the value from the previous frame
+        # "lastPosition" is a Point that stores the previous frame's position
+        # TODO: make this work better
+        self.touching = [False, False, False, False]
+        self.wasTouching = [False, False, False, False]
+        self.lastPosition = self.position
+
     ###
     # Image property, holding the surface currently active for this sprite
     ###
@@ -185,6 +196,11 @@ class Image(Game.Sprite.DirtySprite):
 
             self._recenter()
 
+            # fix collision-detection values
+            self.wasTouching = self.touching[:]
+            self.touching = [False, False, False, False]
+            self.lastPosition = self.position
+            
         if self.alive and self.groups() and self._unaddedChildren:
             for c in self._unaddedChildren:
                 self.addChild(c)
@@ -651,53 +667,29 @@ class Image(Game.Sprite.DirtySprite):
            @return: The result of calling this object's response methods.
         """
         if self.overlap(other, checkAlive):
-            # direction(s) of collision
-            _l, _r, _t, _b = False, False, False, False
-
-            # figure out which sides of the sprite are colliding
-##            _lrect = Game.Rect(self.rect.left, self.rect.top, 1, self.rect.height-1)
-##            _rrect = Game.Rect(self.rect.right-2, self.rect.top, 1, self.rect.height-1)
-##            _trect = Game.Rect(self.rect.left, self.rect.top, self.rect.width-1, 1)
-##            _brect = Game.Rect(self.rect.left, self.rect.bottom-2, self.rect.width-1, 1)
-##
-##            _l = _lrect.colliderect(other)
-##            _r = _rrect.colliderect(other)
-##            _t = _trect.colliderect(other)
-##            _b = _brect.colliderect(other)
-
             # figure out which sides of this object are colliding,
             # based on velocity/position data
-            selfvx,selfvy = self.velocity if hasattr(self, 'velocity') else 0,0
-            othervx,othervy = other.velocity if hasattr(other, 'velocity') else 0,0
-            orect = other.rect if not isinstance(other,Game.Rect) else other
+            selfvx, selfvy = getattr(self, 'velocity', self.position - self.lastPosition)
+            othervx, othervy = getattr(self, 'velocity', other.position - other.lastPosition)
 
-            if selfvx > othervx or (self.x < other.x and self.rect.right > orect.left):
-                # this object is approaching from the left
-                # so its right edge will be colliding
-                _r = True
-                
-            if selfvx < othervx or (self.x > other.x and self.rect.left < orect.right):
-                # this object is approaching from the right
-                # so its left edge will be colliding
-                _l = True
+            if self.right > other.left or self.left < other.right or \
+               self.bottom > other.top or self.top < other.bottom:
+                if selfvx > othervx:
+                    self.touching[Image.RIGHT] = other.touching[Image.LEFT] = self.right > other.left
+                elif selfvx < othervx:
+                    self.touching[Image.LEFT] = other.touching[Image.RIGHT] = self.left < other.right
 
-            if selfvy > othervy or (self.y < other.y and self.rect.bottom > orect.top):
-                # this object is approaching from the top
-                # so its bottom will be colliding
-                _b = True
-
-            if selfvy < othervy or (self.y > other.y and self.rect.top < orect.bottom):
-                # this object is approaching from the bottom
-                # so its top will be colliding
-                _t = True
-            
+                if selfvy > othervy:
+                    self.touching[Image.BOTTOM] = other.touching[Image.TOP] = self.bottom > other.top
+                elif selfvy < othervy:
+                    self.touching[Image.TOP] = other.touching[Image.BOTTOM] = self.top < other.bottom
 
             if kill:
                 self.kill()
                 other.kill()
 
             # call this sprite's specific collision response method
-            return self.onCollision(other, Struct(left=_l, right=_r, top=_t, bottom=_b))
+            return self.onCollision(other)
 
     def collideRect(self, otherrect):
         """Checks for collision against a rectangle.
@@ -722,11 +714,9 @@ class Image(Game.Sprite.DirtySprite):
 
     ###
     # Collision response
-    # These methods do nothing as they stand, because they are intended to be
-    # overridden in derived classes. However, they still call super methods so
-    # that we can make mixins that have specific collision responses.
-    # We wrap the super calls in a try/except, because pygame's Sprites don't
-    # have these methods.
+    # The default collision response handler merely separates two sprites.
+    # This can be useful in games involving e.g., walls or platforms, but
+    # you can also override the onCollision method to customize the behavior.
     ###
 
     def onCollision(self, other, directions=None):
@@ -740,10 +730,15 @@ class Image(Game.Sprite.DirtySprite):
         """
         # don't do anything unless this sprite participates in collisions
         if self.collidable and self.alive:
-            if directions.left: self.hitLeft(other)
-            if directions.right: self.hitRight(other)
-            if directions.top: self.hitTop(other)
-            if directions.bottom: self.hitBottom(other)
+            # by default, separate colliding sprites
+            if self.touching[Image.LEFT]:
+                self.separateX(other)
+            if self.touching[Image.RIGHT]:
+                self.separateX(other)
+            if self.touching[Image.TOP]:
+                self.separateY(other)
+            if self.touching[Image.BOTTOM]:
+                self.separateY(other)
 
             try:
                 super(Image, self).onCollision(other, directions)
@@ -754,6 +749,49 @@ class Image(Game.Sprite.DirtySprite):
         else:
             return False
 
+    ###
+    # Separate two sprites that are colliding, in either the X or Y directions
+    ###
+
+    def separateX(self, other):
+        """Separates two colliding sprites in the X direction.
+
+           @param other: The other sprite that is overlapping this one.
+           @todo: Make this handle cases where neither sprite is fixed.
+        """
+        # TODO: Hitboxes
+        if getattr(self, 'fixed', None):
+            return other.separateX(self)
+        elif getattr(other, 'fixed', None):
+            if self.x >= other.x and self.touching[Image.LEFT]:
+                self.x = other.rect.right + self.width/2
+                self.touching[Image.LEFT] = False
+            elif self.x < other.x and self.touching[Image.RIGHT]:
+                self.x = other.rect.left - self.width/2
+                self.touching[Image.RIGHT] = False
+
+    def separateY(self, other):
+        """Separates two colliding sprites in the X direction.
+
+           @param other: The other sprite that is overlapping this one.
+           @todo: Make this handle cases where neither sprite is fixed.
+        """
+        # TODO: Hitboxes
+        if getattr(self, 'fixed', None):
+            return other.separateY(self)
+        elif getattr(other, 'fixed', None):
+            if self.y >= other.y and self.touching[Image.TOP]:
+                self.y = other.rect.bottom + self.height/2
+                self.touching[Image.TOP] = False
+            elif self.y < other.y and self.touching[Image.BOTTOM]:
+                self.y = other.rect.top - self.height/2
+                self.touching[Image.BOTTOM] = False
+
+    ###
+    # Directional collision response
+    # These methods can be used as a convenient hook for custom collision
+    # response handlers. By default, they do nothing and are never called.
+    ###
     def hitLeft(self, other):
         """Collision response for a hit on the left side of the sprite.
 

@@ -176,7 +176,26 @@ class TileMap(Image):
         for tile in self.tiles:
             if self.at(*tile).index in indices:
                 self.tiles[tile].collidable = False
-            
+
+    def getSurroundingTiles(self, img):
+        """Gets the tile containing the center point of a given Image,
+           as well as the eight surrounding tiles.
+
+           @param img: An Image whose position is contained in the tilemap.
+           @return: A list containing nine tiles, or any empty list if the
+               Image's center is not within the tilemap's boundaries.
+               The list is in the order:
+               [topleft, top, topright, left, center, right, bottomleft, bottom, bottomright],
+               with each entry the appropriate tile (or None if there is no
+               tile in that position.
+        """
+        tx = (img.x - self.x) // self.sheet.spritewidth
+        ty = (img.y - self.y) // self.sheet.spriteheight
+        surrounding = []
+        for y in [-1,0,1]:
+            for x in [-1,0,1]:
+                surrounding.append(self.at(tx+x, ty+y).tile)
+        return surrounding if any(surrounding) else []
 
     @classmethod
     def fromString(cls, sheet, mapstring, *args, **kwargs):

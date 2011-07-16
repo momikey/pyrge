@@ -411,11 +411,15 @@ class GameLoop(object):
                     if evt.type == pygame.QUIT:
                         raise SystemExit
 
-                if not self.paused:
-                    for ud in self._updates:
-                        ud()
+                # reject frames that take too long
+                # (e.g., at startup, when the first frame can take
+                # as long as 10 seconds.)
+                if self.frameTime < (5 * (1000./self.fps)):
+                    if not self.paused:
+                        for ud in self._updates:
+                            ud()
 
-                pygame.display.update(self._rectList)
+                    pygame.display.update(self._rectList)
 
                 # set game-global values
                 self.frameTime = self.clock.tick(self.fps)

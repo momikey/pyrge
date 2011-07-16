@@ -51,17 +51,19 @@ class Wrapper(SpriteMixin):
         # All we do here is get the extents of the world. If we're beyond one
         # of the four edges, we move to the opposite edge.
         # However, this doesn't compensate for _how far_ we're past the edge.
-
+        # Also, notice that we set lastPosition to be the same as the sprite's
+        # new position. This helps with collision response at the new position.
+        
         bounds = Game.world.getBounds()
         if self.x < bounds.left:
-            self.x = bounds.right
+            self.lastPosition.x = self.x = bounds.right
         elif self.x > bounds.right:
-            self.x = bounds.left
+            self.lastPosition.x = self.x = bounds.left
 
         if self.y < bounds.top:
-            self.y = bounds.bottom
+            self.lastPosition.y = self.y = bounds.bottom
         elif self.y > bounds.bottom:
-            self.y = bounds.top
+            self.lastPosition.y = self.y = bounds.top
 
         super(Wrapper, self).update()
 
@@ -73,19 +75,23 @@ class Stopper(SpriteMixin):
         bounds = Game.world.getBounds()
         if self.left < bounds.left:
             self.x = bounds.left + self.width/2.
+            self.lastPosition.x = self.x
             if hasattr(self, "velocity"):
                 self.velocity.x = self.acceleration.x = 0
         elif self.right > bounds.right:
             self.x = bounds.right - self.width/2.
+            self.lastPosition.x = self.x
             if hasattr(self, "velocity"):
                 self.velocity.x = self.acceleration.x = 0
 
         if self.top < bounds.top:
             self.y = bounds.top + self.height/2.
+            self.lastPosition.y = self.y
             if hasattr(self, "velocity"):
                 self.velocity.y = self.acceleration.y = 0
         elif self.bottom > bounds.bottom:
             self.y = bounds.bottom - self.height/2.
+            self.lastPosition.y = self.y
             if hasattr(self, "velocity"):
                 self.velocity.y = self.acceleration.y = 0
 
